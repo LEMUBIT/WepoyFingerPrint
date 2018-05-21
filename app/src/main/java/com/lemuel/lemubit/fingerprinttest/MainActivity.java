@@ -1,6 +1,7 @@
 package com.lemuel.lemubit.fingerprinttest;
 
 import android.annotation.SuppressLint;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -26,7 +27,8 @@ import android.widget.Toast;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;
-import com.wepoy.util.Result;
+//import com.wepoy.util.Result;
+
 
 @SuppressLint({"SdCardPath", "HandlerLeak"})
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -125,21 +127,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);
 
-        mScanner = FingerprintScanner.getInstance(this);
+      mScanner = FingerprintScanner.getInstance(getApplicationContext());
 
-        mSN = (TextView) findViewById(R.id.tv_fps_sn);
-        mFwVersion = (TextView) findViewById(R.id.tv_fps_fw);
-        mCaptureTime = (EditText) findViewById(R.id.captureTime);
-        mExtractTime = (EditText) findViewById(R.id.extractTime);
-        mGeneralizeTime = (EditText) findViewById(R.id.generalizeTime);
-        mVerifyTime = (EditText) findViewById(R.id.verifyTime);
-        mFingerprintImage = (ImageView) findViewById(R.id.fingerimage);
+        mSN = findViewById(R.id.tv_fps_sn);
+        mFwVersion = findViewById(R.id.tv_fps_fw);
+        mCaptureTime = findViewById(R.id.captureTime);
+        mExtractTime = findViewById(R.id.extractTime);
+        mGeneralizeTime = findViewById(R.id.generalizeTime);
+        mVerifyTime = findViewById(R.id.verifyTime);
+        mFingerprintImage = findViewById(R.id.fingerimage);
 
-        mBtnEnroll = (Button) findViewById(R.id.bt_enroll);
-        mBtnVerify = (Button) findViewById(R.id.bt_verify);
-        mBtnIdentify = (Button) findViewById(R.id.bt_identify);
-        mBtnClear = (Button) findViewById(R.id.bt_clear);
-        mBtnShow = (Button) findViewById(R.id.bt_show);
+        mBtnEnroll = findViewById(R.id.bt_enroll);
+        mBtnVerify = findViewById(R.id.bt_verify);
+        mBtnIdentify = findViewById(R.id.bt_identify);
+        mBtnClear = findViewById(R.id.bt_clear);
+        mBtnShow = findViewById(R.id.bt_show);
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -250,63 +252,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void openDevice() {
-        new Thread() {
-            @Override
-            public void run() {
-                showProgressDialog(getString(R.string.loading), getString(R.string.preparing_device));
-                int error;
-                if ((error = mScanner.powerOn()) != FingerprintScanner.RESULT_OK) {
-                    showErrorDialog(getString(R.string.fingerprint_device_power_on_failed), getFingerprintErrorString(error));
-                }
-                if ((error = mScanner.open()) != FingerprintScanner.RESULT_OK) {
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_SN, getString(R.string.fps_sn, "null")));
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_FW_VERSION, getString(R.string.fps_fw, "null")));
-                    showErrorDialog(getString(R.string.fingerprint_device_open_failed), getFingerprintErrorString(error));
-                } else {
-                    Result res = mScanner.getSN();
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_SN, getString(R.string.fps_sn, (String) res.data)));
-                    res = mScanner.getFirmwareVersion();
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_FW_VERSION, getString(R.string.fps_fw, (String) res.data)));
-                    showInfoToast(getString(R.string.fingerprint_device_open_success));
-                    enableControl(true);
-                }
-                if ((error = Bione.initialize(MainActivity.this, FP_DB_PATH)) != Bione.RESULT_OK) {
-                    showErrorDialog(getString(R.string.algorithm_initialization_failed), getFingerprintErrorString(error));
-                }
-                Log.i(TAG, "Fingerprint algorithm version: " + Bione.getVersion());
-                dismissProgressDialog();
-            }
-        }.start();
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                showProgressDialog(getString(R.string.loading), getString(R.string.preparing_device));
+//                int error;
+//                if ((error = mScanner.powerOn()) != FingerprintScanner.RESULT_OK) {
+//                    showErrorDialog(getString(R.string.fingerprint_device_power_on_failed), getFingerprintErrorString(error));
+//                }
+//                if ((error = mScanner.open()) != FingerprintScanner.RESULT_OK) {
+//                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_SN, getString(R.string.fps_sn, "null")));
+//                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_FW_VERSION, getString(R.string.fps_fw, "null")));
+//                    showErrorDialog(getString(R.string.fingerprint_device_open_failed), getFingerprintErrorString(error));
+//                } else {
+//                    Result res = mScanner.getSN();
+//                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_SN, getString(R.string.fps_sn, (String) res.data)));
+//                    res = mScanner.getFirmwareVersion();
+//                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_FW_VERSION, getString(R.string.fps_fw, (String) res.data)));
+//                    showInfoToast(getString(R.string.fingerprint_device_open_success));
+//                    enableControl(true);
+//                }
+//                if ((error = Bione.initialize(MainActivity.this, FP_DB_PATH)) != Bione.RESULT_OK) {
+//                    showErrorDialog(getString(R.string.algorithm_initialization_failed), getFingerprintErrorString(error));
+//                }
+//                Log.i(TAG, "Fingerprint algorithm version: " + Bione.getVersion());
+//                dismissProgressDialog();
+//            }
+//        }.start();
     }
 
     private void closeDevice(final boolean finish) {
-        new Thread() {
-            @Override
-            public void run() {
-                showProgressDialog(getString(R.string.loading), getString(R.string.closing_device));
-                enableControl(false);
-                int error;
-                if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) {
-                    mTask.cancel(false);
-                    mTask.waitForDone();
-                }
-                if ((error = mScanner.close()) != FingerprintScanner.RESULT_OK) {
-                    showErrorDialog(getString(R.string.fingerprint_device_close_failed), getFingerprintErrorString(error));
-                } else {
-                    showInfoToast(getString(R.string.fingerprint_device_close_success));
-                }
-                if ((error = mScanner.powerOff()) != FingerprintScanner.RESULT_OK) {
-                    showErrorDialog(getString(R.string.fingerprint_device_power_off_failed), getFingerprintErrorString(error));
-                }
-                if ((error = Bione.exit()) != Bione.RESULT_OK) {
-                    showErrorDialog(getString(R.string.algorithm_cleanup_failed), getFingerprintErrorString(error));
-                }
-                if (finish) {
-                    finishActivity();
-                }
-                dismissProgressDialog();
-            }
-        }.start();
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                showProgressDialog(getString(R.string.loading), getString(R.string.closing_device));
+//                enableControl(false);
+//                int error;
+//                if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) {
+//                    mTask.cancel(false);
+//                    mTask.waitForDone();
+//                }
+//                if ((error = mScanner.close()) != FingerprintScanner.RESULT_OK) {
+//                    showErrorDialog(getString(R.string.fingerprint_device_close_failed), getFingerprintErrorString(error));
+//                } else {
+//                    showInfoToast(getString(R.string.fingerprint_device_close_success));
+//                }
+//                if ((error = mScanner.powerOff()) != FingerprintScanner.RESULT_OK) {
+//                    showErrorDialog(getString(R.string.fingerprint_device_power_off_failed), getFingerprintErrorString(error));
+//                }
+//                if ((error = Bione.exit()) != Bione.RESULT_OK) {
+//                    showErrorDialog(getString(R.string.algorithm_cleanup_failed), getFingerprintErrorString(error));
+//                }
+//                if (finish) {
+//                    finishActivity();
+//                }
+//                dismissProgressDialog();
+//            }
+//        }.start();
     }
 
     private void enroll() {
@@ -485,106 +487,106 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected Void doInBackground(String... params) {
-            long startTime, captureTime = -1, extractTime = -1, generalizeTime = -1, verifyTime = -1;
-            FingerprintImage fi = null;
-            byte[] fpFeat = null, fpTemp = null;
-            Result res;
-
-            do {
-                if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
-                    showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
-                    mScanner.prepare();
-                    do {
-                        startTime = System.currentTimeMillis();
-                        res = mScanner.capture();
-                        captureTime = System.currentTimeMillis() - startTime;
-                    } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
-                    mScanner.finish();
-                    if (isCancelled()) {
-                        break;
-                    }
-                    if (res.error != FingerprintScanner.RESULT_OK) {
-                        showErrorDialog(getString(R.string.capture_image_failed), getFingerprintErrorString(res.error));
-                        break;
-                    }
-                    fi = (FingerprintImage) res.data;
-                    Log.i(TAG, "Fingerprint image quality is " + Bione.getFingerprintQuality(fi));
-                }
-
-                if (params[0].equals("enroll")) {
-                    showProgressDialog(getString(R.string.loading), getString(R.string.enrolling));
-                } else if (params[0].equals("verify")) {
-                    showProgressDialog(getString(R.string.loading), getString(R.string.verifying));
-                } else if (params[0].equals("identify")) {
-                    showProgressDialog(getString(R.string.loading), getString(R.string.identifying));
-                }
-
-                if (params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
-                    startTime = System.currentTimeMillis();
-                    res = Bione.extractFeature(fi);
-                    extractTime = System.currentTimeMillis() - startTime;
-                    if (res.error != Bione.RESULT_OK) {
-                        showErrorDialog(getString(R.string.enroll_failed_because_of_extract_feature), getFingerprintErrorString(res.error));
-                        break;
-                    }
-                    fpFeat = (byte[]) res.data;
-                }
-
-                if (params[0].equals("enroll")) {
-                    startTime = System.currentTimeMillis();
-                    res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat);
-                    generalizeTime = System.currentTimeMillis() - startTime;
-                    if (res.error != Bione.RESULT_OK) {
-                        showErrorDialog(getString(R.string.enroll_failed_because_of_make_template), getFingerprintErrorString(res.error));
-                        break;
-                    }
-                    fpTemp = (byte[]) res.data;
-
-                    int id = Bione.getFreeID();
-                    if (id < 0) {
-                        showErrorDialog(getString(R.string.enroll_failed_because_of_get_id), getFingerprintErrorString(id));
-                        break;
-                    }
-                    int ret = Bione.enroll(id, fpTemp);
-                    if (ret != Bione.RESULT_OK) {
-                        showErrorDialog(getString(R.string.enroll_failed_because_of_error), getFingerprintErrorString(ret));
-                        break;
-                    }
-                    mId = id;
-                    showInfoToast(getString(R.string.enroll_success) + id);
-                } else if (params[0].equals("verify")) {
-                    startTime = System.currentTimeMillis();
-                    res = Bione.verify(mId, fpFeat);
-                    verifyTime = System.currentTimeMillis() - startTime;
-                    if (res.error != Bione.RESULT_OK) {
-                        showErrorDialog(getString(R.string.verify_failed_because_of_error), getFingerprintErrorString(res.error));
-                        break;
-                    }
-                    if ((Boolean) res.data) {
-                        showInfoToast(getString(R.string.fingerprint_match));
-                    } else {
-                        showInfoToast(getString(R.string.fingerprint_not_match));
-                    }
-                } else if (params[0].equals("identify")) {
-                    startTime = System.currentTimeMillis();
-                    int id = Bione.identify(fpFeat);
-                    verifyTime = System.currentTimeMillis() - startTime;
-                    if (id < 0) {
-                        showErrorDialog(getString(R.string.identify_failed_because_of_error), getFingerprintErrorString(id));
-                        break;
-                    }
-                    showInfoToast(getString(R.string.identify_match) + id);
-                }
-
-                if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
-                    updateFingerprintImage(fi);
-                }
-            } while (false);
-
-            updateSingerTestText(captureTime, extractTime, generalizeTime, verifyTime);
-            enableControl(true);
-            dismissProgressDialog();
-            mIsDone = true;
+//            long startTime, captureTime = -1, extractTime = -1, generalizeTime = -1, verifyTime = -1;
+//            FingerprintImage fi = null;
+//            byte[] fpFeat = null, fpTemp = null;
+//            Result res;
+//
+//            do {
+//                if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
+//                    showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
+//                    mScanner.prepare();
+//                    do {
+//                        startTime = System.currentTimeMillis();
+//                        res = mScanner.capture();
+//                        captureTime = System.currentTimeMillis() - startTime;
+//                    } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
+//                    mScanner.finish();
+//                    if (isCancelled()) {
+//                        break;
+//                    }
+//                    if (res.error != FingerprintScanner.RESULT_OK) {
+//                        showErrorDialog(getString(R.string.capture_image_failed), getFingerprintErrorString(res.error));
+//                        break;
+//                    }
+//                    fi = (FingerprintImage) res.data;
+//                    Log.i(TAG, "Fingerprint image quality is " + Bione.getFingerprintQuality(fi));
+//                }
+//
+//                if (params[0].equals("enroll")) {
+//                    showProgressDialog(getString(R.string.loading), getString(R.string.enrolling));
+//                } else if (params[0].equals("verify")) {
+//                    showProgressDialog(getString(R.string.loading), getString(R.string.verifying));
+//                } else if (params[0].equals("identify")) {
+//                    showProgressDialog(getString(R.string.loading), getString(R.string.identifying));
+//                }
+//
+//                if (params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
+//                    startTime = System.currentTimeMillis();
+//                    res = Bione.extractFeature(fi);
+//                    extractTime = System.currentTimeMillis() - startTime;
+//                    if (res.error != Bione.RESULT_OK) {
+//                        showErrorDialog(getString(R.string.enroll_failed_because_of_extract_feature), getFingerprintErrorString(res.error));
+//                        break;
+//                    }
+//                    fpFeat = (byte[]) res.data;
+//                }
+//
+//                if (params[0].equals("enroll")) {
+//                    startTime = System.currentTimeMillis();
+//                    res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat);
+//                    generalizeTime = System.currentTimeMillis() - startTime;
+//                    if (res.error != Bione.RESULT_OK) {
+//                        showErrorDialog(getString(R.string.enroll_failed_because_of_make_template), getFingerprintErrorString(res.error));
+//                        break;
+//                    }
+//                    fpTemp = (byte[]) res.data;
+//
+//                    int id = Bione.getFreeID();
+//                    if (id < 0) {
+//                        showErrorDialog(getString(R.string.enroll_failed_because_of_get_id), getFingerprintErrorString(id));
+//                        break;
+//                    }
+//                    int ret = Bione.enroll(id, fpTemp);
+//                    if (ret != Bione.RESULT_OK) {
+//                        showErrorDialog(getString(R.string.enroll_failed_because_of_error), getFingerprintErrorString(ret));
+//                        break;
+//                    }
+//                    mId = id;
+//                    showInfoToast(getString(R.string.enroll_success) + id);
+//                } else if (params[0].equals("verify")) {
+//                    startTime = System.currentTimeMillis();
+//                    res = Bione.verify(mId, fpFeat);
+//                    verifyTime = System.currentTimeMillis() - startTime;
+//                    if (res.error != Bione.RESULT_OK) {
+//                        showErrorDialog(getString(R.string.verify_failed_because_of_error), getFingerprintErrorString(res.error));
+//                        break;
+//                    }
+//                    if ((Boolean) res.data) {
+//                        showInfoToast(getString(R.string.fingerprint_match));
+//                    } else {
+//                        showInfoToast(getString(R.string.fingerprint_not_match));
+//                    }
+//                } else if (params[0].equals("identify")) {
+//                    startTime = System.currentTimeMillis();
+//                    int id = Bione.identify(fpFeat);
+//                    verifyTime = System.currentTimeMillis() - startTime;
+//                    if (id < 0) {
+//                        showErrorDialog(getString(R.string.identify_failed_because_of_error), getFingerprintErrorString(id));
+//                        break;
+//                    }
+//                    showInfoToast(getString(R.string.identify_match) + id);
+//                }
+//
+//                if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
+//                    updateFingerprintImage(fi);
+//                }
+//            } while (false);
+//
+//            updateSingerTestText(captureTime, extractTime, generalizeTime, verifyTime);
+//            enableControl(true);
+//            dismissProgressDialog();
+//            mIsDone = true;
             return null;
         }
 
@@ -604,5 +606,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             while (!mIsDone) {
             }
         }
-    }
+   }
 }
