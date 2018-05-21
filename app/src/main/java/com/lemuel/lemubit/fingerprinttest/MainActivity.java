@@ -29,6 +29,7 @@ import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;
 //import com.wepoy.util.Result;
 
+
 @SuppressLint({"SdCardPath", "HandlerLeak"})
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -128,19 +129,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
       mScanner = FingerprintScanner.getInstance(getApplicationContext());
 
-        mSN = (TextView) findViewById(R.id.tv_fps_sn);
-        mFwVersion = (TextView) findViewById(R.id.tv_fps_fw);
-        mCaptureTime = (EditText) findViewById(R.id.captureTime);
-        mExtractTime = (EditText) findViewById(R.id.extractTime);
-        mGeneralizeTime = (EditText) findViewById(R.id.generalizeTime);
-        mVerifyTime = (EditText) findViewById(R.id.verifyTime);
-        mFingerprintImage = (ImageView) findViewById(R.id.fingerimage);
+        mSN = findViewById(R.id.tv_fps_sn);
+        mFwVersion = findViewById(R.id.tv_fps_fw);
+        mCaptureTime = findViewById(R.id.captureTime);
+        mExtractTime = findViewById(R.id.extractTime);
+        mGeneralizeTime = findViewById(R.id.generalizeTime);
+        mVerifyTime = findViewById(R.id.verifyTime);
+        mFingerprintImage = findViewById(R.id.fingerimage);
 
-        mBtnEnroll = (Button) findViewById(R.id.bt_enroll);
-        mBtnVerify = (Button) findViewById(R.id.bt_verify);
-        mBtnIdentify = (Button) findViewById(R.id.bt_identify);
-        mBtnClear = (Button) findViewById(R.id.bt_clear);
-        mBtnShow = (Button) findViewById(R.id.bt_show);
+        mBtnEnroll = findViewById(R.id.bt_enroll);
+        mBtnVerify = findViewById(R.id.bt_verify);
+        mBtnIdentify = findViewById(R.id.bt_identify);
+        mBtnClear = findViewById(R.id.bt_clear);
+        mBtnShow = findViewById(R.id.bt_show);
 
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
