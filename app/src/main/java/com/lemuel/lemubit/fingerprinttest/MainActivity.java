@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);
 
-      mScanner = FingerprintScanner.getInstance(getApplicationContext());
+        mScanner = FingerprintScanner.getInstance(getApplicationContext());
 
         mSN = findViewById(R.id.tv_fps_sn);
         mFwVersion = findViewById(R.id.tv_fps_fw);
@@ -511,6 +511,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     fi = (FingerprintImage) res.data;
                     Log.i(TAG, "Fingerprint image quality is " + Bione.getFingerprintQuality(fi));
+
                 }
 
                 if (params[0].equals("enroll")) {
