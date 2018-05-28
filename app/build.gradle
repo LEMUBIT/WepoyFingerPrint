@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'realm-android'
 android {
     compileSdkVersion 26
     defaultConfig {
@@ -22,14 +22,18 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-//configurations {
-//    all*. exclude group: 'com.android.support', module: 'support-v4'
-//    all*. exclude group: 'com.android.support', module: 'support-annotations'
-//}
+
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:26.0.0'
     testImplementation 'junit:junit:4.12'
+    implementation 'com.airbnb.android:lottie:2.5.4'
+    debugImplementation ('com.balsikandar.android:crashreporter:1.0.9'){
+        exclude group: 'com.android.support', module: 'design'
+    }
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

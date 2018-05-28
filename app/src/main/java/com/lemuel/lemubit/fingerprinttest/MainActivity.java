@@ -24,10 +24,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.balsikandar.crashreporter.CrashReporter;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;
 import com.wepoy.util.Result;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 @SuppressLint({"SdCardPath", "HandlerLeak"})
@@ -45,23 +49,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int MSG_SHOW_PROGRESS_DIALOG = 7;
     private static final int MSG_DISMISS_PROGRESS_DIALOG = 8;
     private static final int MSG_FINISH_ACTIVITY = 9;
-
-    private TextView mSN;
-    private TextView mFwVersion;
+    Realm realm;
+    private EditText nameTxt;
     private Button mBtnEnroll;
     private Button mBtnVerify;
     private Button mBtnIdentify;
     private Button mBtnClear;
     private Button mBtnShow;
-    private EditText mCaptureTime;
-    private EditText mExtractTime;
-    private EditText mGeneralizeTime;
-    private EditText mVerifyTime;
     private ImageView mFingerprintImage;
     private ProgressDialog mProgressDialog;
     private FingerprintScanner mScanner;
     private FingerprintTask mTask;
     private int mId;
+    private int newUserId = -1;
+    String choice;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -79,11 +80,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 case MSG_UPDATE_TEXT: {
-                    String[] texts = (String[]) msg.obj;
-                    mCaptureTime.setText(texts[0]);
-                    mExtractTime.setText(texts[1]);
-                    mGeneralizeTime.setText(texts[2]);
-                    mVerifyTime.setText(texts[3]);
                     break;
                 }
                 case MSG_UPDATE_BUTTON: {
@@ -96,11 +92,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 }
                 case MSG_UPDATE_SN: {
-                    mSN.setText((String) msg.obj);
                     break;
                 }
                 case MSG_UPDATE_FW_VERSION: {
-                    mFwVersion.setText((String) msg.obj);
                     break;
                 }
                 case MSG_SHOW_PROGRESS_DIALOG: {
@@ -128,15 +122,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_fingerprint);
 
         mScanner = FingerprintScanner.getInstance(getApplicationContext());
-
-        mSN = findViewById(R.id.tv_fps_sn);
-        mFwVersion = findViewById(R.id.tv_fps_fw);
-        mCaptureTime = findViewById(R.id.captureTime);
-        mExtractTime = findViewById(R.id.extractTime);
-        mGeneralizeTime = findViewById(R.id.generalizeTime);
-        mVerifyTime = findViewById(R.id.verifyTime);
         mFingerprintImage = findViewById(R.id.fingerimage);
-
+        nameTxt = findViewById(R.id.nameTxt);
         mBtnEnroll = findViewById(R.id.bt_enroll);
         mBtnVerify = findViewById(R.id.bt_verify);
         mBtnIdentify = findViewById(R.id.bt_identify);
@@ -150,12 +137,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mProgressDialog.setCancelable(false);
 
         updateSingerTestText(-1, -1, -1, -1);
+        // Initialize Realm (just once per application)
+        Realm.init(getApplicationContext());
+        // Get a Realm instance for this thread
+        realm = Realm.getDefaultInstance();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         openDevice();
     }
 
@@ -170,20 +160,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_enroll:
+                mFingerprintImage.setVisibility(View.VISIBLE);
                 enroll();
                 break;
             case R.id.bt_verify:
+                mFingerprintImage.setVisibility(View.VISIBLE);
                 verify();
                 break;
             case R.id.bt_identify:
+                mFingerprintImage.setVisibility(View.VISIBLE);
                 identify();
                 break;
             case R.id.bt_clear:
                 clearFingerprintDatabase();
                 break;
-            case R.id.bt_show:
-                showFingerprintImage();
-                break;
+//            case R.id.bt_show:
+//                showFingerprintImage();
+//                break;
         }
     }
 
@@ -477,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return getString(strid);
     }
 
-    private class FingerprintTask extends AsyncTask<String, Integer, Void> {
+     class FingerprintTask extends AsyncTask<String, Integer, Void> {
         private boolean mIsDone = false;
 
         @Override
@@ -491,7 +484,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             FingerprintImage fi = null;
             byte[] fpFeat = null, fpTemp = null;
             Result res;
-
+            choice = params[0];
             do {
                 if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
                     showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
@@ -544,11 +537,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     fpTemp = (byte[]) res.data;
 
                     int id = Bione.getFreeID();
+                    newUserId = id;
                     if (id < 0) {
                         showErrorDialog(getString(R.string.enroll_failed_because_of_get_id), getFingerprintErrorString(id));
                         break;
                     }
                     int ret = Bione.enroll(id, fpTemp);
+
+
                     if (ret != Bione.RESULT_OK) {
                         showErrorDialog(getString(R.string.enroll_failed_because_of_error), getFingerprintErrorString(ret));
                         break;
@@ -571,11 +567,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else if (params[0].equals("identify")) {
                     startTime = System.currentTimeMillis();
                     int id = Bione.identify(fpFeat);
+                    newUserId = id;
                     verifyTime = System.currentTimeMillis() - startTime;
                     if (id < 0) {
                         showErrorDialog(getString(R.string.identify_failed_because_of_error), getFingerprintErrorString(id));
                         break;
                     }
+
                     showInfoToast(getString(R.string.identify_match) + id);
                 }
 
@@ -593,6 +591,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         protected void onPostExecute(Void result) {
+            if (choice.equals("enroll")) {
+                try {
+
+                    final RealmModel user = new RealmModel(); // Create a new object
+                    user.setName(nameTxt.getText().toString());
+                    user.setId(newUserId);
+                    realm.executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.copyToRealmOrUpdate(user);
+                        }
+                    });
+                } catch (Exception e) {
+                    CrashReporter.logException(e);
+                }
+            }
+            if (choice.equals("identify")) {
+                if (newUserId >= 0) {
+                    RealmResults<RealmModel> realmResult = realm.where(RealmModel.class)
+                            .equalTo("id", newUserId).findAll();
+                    //todo continue from here
+                    Toast.makeText(MainActivity.this, "Welcome " + realmResult.get(0).getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
         }
 
         @Override
@@ -607,5 +629,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             while (!mIsDone) {
             }
         }
-   }
+    }
 }

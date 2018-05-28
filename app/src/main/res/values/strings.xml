@@ -14,7 +14,7 @@
     <string name="enroll_fp">Enroll</string>
     <string name="verify_fp">Verify</string>
     <string name="identify_fp">Identify</string>
-    <string name="clear_fp_db">Clear database</string>
+    <string name="clear_fp_db">Clear db</string>
     <string name="show_fp">Show image</string>
     <string name="press_finger">Please press finger on fingerprint device.</string>
     <string name="enrolling">Enrolling fingerprint to database…</string>
