@@ -28,9 +28,11 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:26.0.0'
+    implementation 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     testImplementation 'junit:junit:4.12'
     implementation 'com.airbnb.android:lottie:2.5.4'
-    debugImplementation ('com.balsikandar.android:crashreporter:1.0.9'){
+    debugImplementation('com.balsikandar.android:crashreporter:1.0.9') {
         exclude group: 'com.android.support', module: 'design'
     }
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'

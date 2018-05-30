@@ -1,5 +1,6 @@
 package com.lemuel.lemubit.fingerprinttest;
 
+import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -11,7 +12,7 @@ import com.wepoy.fp.FingerprintScanner;
 import com.wepoy.util.Result;
 
 class Util {
-    public static String getFingerprintErrorString(MainActivity mainActivity, int error) {
+    public static String getFingerprintErrorString(Activity activity, int error) {
         int strid;
         switch (error) {
             case FingerprintScanner.RESULT_OK:
@@ -105,7 +106,7 @@ class Util {
                 strid = R.string.error_other;
                 break;
         }
-        return mainActivity.getString(strid);
+        return activity.getString(strid);
     }
 
     public static void updateFingerprintImage(MainActivity mainActivity, FingerprintImage fi) {
@@ -121,7 +122,7 @@ class Util {
         new Thread() {
             @Override
             public void run() {
-                mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.closing_device));
+                mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.closing_device), mainActivity);
                 mainActivity.enableControl(false);
                 int error;
                 if (mainActivity.mTask != null && mainActivity.mTask.getStatus() != AsyncTask.Status.FINISHED) {
@@ -143,6 +144,92 @@ class Util {
                     mainActivity.finishActivity();
                 }
                 mainActivity.dismissProgressDialog();
+            }
+        }.start();
+    }
+    static void closeDevice(final EnrolActivity enrolActivity, final boolean finish) {
+        new Thread() {
+            @Override
+            public void run() {
+                enrolActivity.showProgressDialog(enrolActivity.getString(R.string.loading), enrolActivity.getString(R.string.closing_device));
+                int error;
+                if (enrolActivity.mTask != null && enrolActivity.mTask.getStatus() != AsyncTask.Status.FINISHED) {
+                    enrolActivity.mTask.cancel(false);
+                    enrolActivity.mTask.waitForDone();
+                }
+                if ((error = enrolActivity.mScanner.close()) != FingerprintScanner.RESULT_OK) {
+                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_close_failed), getFingerprintErrorString(enrolActivity, error));
+                } else {
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_close_success));
+                }
+                if ((error = enrolActivity.mScanner.powerOff()) != FingerprintScanner.RESULT_OK) {
+                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_power_off_failed), getFingerprintErrorString(enrolActivity, error));
+                }
+                if ((error = Bione.exit()) != Bione.RESULT_OK) {
+                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.algorithm_cleanup_failed), getFingerprintErrorString(enrolActivity, error));
+                }
+                if (finish) {
+                    enrolActivity.finishActivity();
+                }
+                enrolActivity.dismissProgressDialog();
+            }
+        }.start();
+    }
+    static void openDevice(final MainActivity mainActivity) {
+        new Thread() {
+            @Override
+            public void run() {
+                mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.preparing_device), mainActivity);
+                int error;
+                if ((error = mainActivity.mScanner.powerOn()) != FingerprintScanner.RESULT_OK) {
+                    mainActivity.showErrorDialog(mainActivity.getString(R.string.fingerprint_device_power_on_failed), getFingerprintErrorString(mainActivity, error));
+                }
+                if ((error = mainActivity.mScanner.open()) != FingerprintScanner.RESULT_OK) {
+                    mainActivity.mHandler.sendMessage(mainActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_SN, mainActivity.getString(R.string.fps_sn, "null")));
+                    mainActivity.mHandler.sendMessage(mainActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_FW_VERSION, mainActivity.getString(R.string.fps_fw, "null")));
+                    mainActivity.showErrorDialog(mainActivity.getString(R.string.fingerprint_device_open_failed), getFingerprintErrorString(mainActivity, error));
+                } else {
+                    Result res = mainActivity.mScanner.getSN();
+                    mainActivity.mHandler.sendMessage(mainActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_SN, mainActivity.getString(R.string.fps_sn, (String) res.data)));
+                    res = mainActivity.mScanner.getFirmwareVersion();
+                    mainActivity.mHandler.sendMessage(mainActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_FW_VERSION, mainActivity.getString(R.string.fps_fw, (String) res.data)));
+                    mainActivity.showInfoToast(mainActivity.getString(R.string.fingerprint_device_open_success));
+                    mainActivity.enableControl(true);
+                }
+                if ((error = Bione.initialize(mainActivity, MainActivity.FP_DB_PATH)) != Bione.RESULT_OK) {
+                    mainActivity.showErrorDialog(mainActivity.getString(R.string.algorithm_initialization_failed), getFingerprintErrorString(mainActivity, error));
+                }
+                Log.i(MainActivity.TAG, "Fingerprint algorithm version: " + Bione.getVersion());
+                mainActivity.dismissProgressDialog();
+            }
+        }.start();
+    }
+    static void openDevice(final EnrolActivity enrolActivity) {
+        new Thread() {
+            @Override
+            public void run() {
+                enrolActivity.showProgressDialog(enrolActivity.getString(R.string.loading), enrolActivity.getString(R.string.preparing_device));
+                int error;
+                if ((error = enrolActivity.mScanner.powerOn()) != FingerprintScanner.RESULT_OK) {
+                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_power_on_failed), getFingerprintErrorString(enrolActivity, error));
+                }
+                if ((error = enrolActivity.mScanner.open()) != FingerprintScanner.RESULT_OK) {
+                    enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_SN, enrolActivity.getString(R.string.fps_sn, "null")));
+                    enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_FW_VERSION, enrolActivity.getString(R.string.fps_fw, "null")));
+                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_open_failed), getFingerprintErrorString(enrolActivity, error));
+                } else {
+                    Result res = enrolActivity.mScanner.getSN();
+                    enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_SN, enrolActivity.getString(R.string.fps_sn, (String) res.data)));
+                    res = enrolActivity.mScanner.getFirmwareVersion();
+                    enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_FW_VERSION, enrolActivity.getString(R.string.fps_fw, (String) res.data)));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_open_success));
+
+                }
+                if ((error = Bione.initialize(enrolActivity, EnrolActivity.FP_DB_PATH)) != Bione.RESULT_OK) {
+                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.algorithm_initialization_failed), getFingerprintErrorString(enrolActivity, error));
+                }
+                Log.i(MainActivity.TAG, "Fingerprint algorithm version: " + Bione.getVersion());
+                enrolActivity.dismissProgressDialog();
             }
         }.start();
     }

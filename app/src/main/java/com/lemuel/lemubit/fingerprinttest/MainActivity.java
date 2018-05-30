@@ -10,7 +10,6 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintScanner;
-import com.wepoy.util.Result;
 
 import io.realm.Realm;
 
@@ -37,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int MSG_UPDATE_BUTTON = 4;
     public static final int MSG_UPDATE_SN = 5;
     public static final int MSG_UPDATE_FW_VERSION = 6;
-    private static final int MSG_SHOW_PROGRESS_DIALOG = 7;
+    public static final int MSG_SHOW_PROGRESS_DIALOG = 7;
     private static final int MSG_DISMISS_PROGRESS_DIALOG = 8;
     private static final int MSG_FINISH_ACTIVITY = 9;
     Realm realm;
@@ -107,36 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    void openDevice() {
-        new Thread() {
-            @Override
-            public void run() {
-                showProgressDialog(getString(R.string.loading), getString(R.string.preparing_device));
-                int error;
-                if ((error = mScanner.powerOn()) != FingerprintScanner.RESULT_OK) {
-                    showErrorDialog(getString(R.string.fingerprint_device_power_on_failed), Util.getFingerprintErrorString(MainActivity.this, error));
-                }
-                if ((error = mScanner.open()) != FingerprintScanner.RESULT_OK) {
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_SN, getString(R.string.fps_sn, "null")));
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_FW_VERSION, getString(R.string.fps_fw, "null")));
-                    showErrorDialog(getString(R.string.fingerprint_device_open_failed), Util.getFingerprintErrorString(MainActivity.this, error));
-                } else {
-                    Result res = mScanner.getSN();
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_SN, getString(R.string.fps_sn, (String) res.data)));
-                    res = mScanner.getFirmwareVersion();
-                    mHandler.sendMessage(mHandler.obtainMessage(MSG_UPDATE_FW_VERSION, getString(R.string.fps_fw, (String) res.data)));
-                    showInfoToast(getString(R.string.fingerprint_device_open_success));
-                    enableControl(true);
-                }
-                if ((error = Bione.initialize(MainActivity.this, FP_DB_PATH)) != Bione.RESULT_OK) {
-                    showErrorDialog(getString(R.string.algorithm_initialization_failed), Util.getFingerprintErrorString(MainActivity.this, error));
-                }
-                Log.i(TAG, "Fingerprint algorithm version: " + Bione.getVersion());
-                dismissProgressDialog();
-            }
-        }.start();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -157,8 +125,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setCancelable(false);
 
-        // Initialize Realm (just once per application)
-        Realm.init(getApplicationContext());
         // Get a Realm instance for this thread
         realm = Realm.getDefaultInstance();
     }
@@ -166,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         super.onResume();
-        this.openDevice();
+        Util.openDevice(this);
     }
 
     @Override
@@ -257,10 +223,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         builder.setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss());
         return builder.create();
-    }
-
-    public void showProgressDialog(String title, String message) {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
     }
 
     public void dismissProgressDialog() {

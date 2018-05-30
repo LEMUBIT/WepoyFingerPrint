@@ -2,7 +2,6 @@ package com.lemuel.lemubit.fingerprinttest;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.widget.Toast;
 
 import com.balsikandar.crashreporter.CrashReporter;
@@ -36,7 +35,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
        mainActivity.choice = params[0];
        do {
            if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
-               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.press_finger));
+               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.press_finger), mainActivity);
                mainActivity.mScanner.prepare();
                do {
                    startTime = System.currentTimeMillis();
@@ -57,11 +56,11 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
            }
 
            if (params[0].equals("enroll")) {
-               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.enrolling));
+               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.enrolling), mainActivity);
            } else if (params[0].equals("verify")) {
-               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.verifying));
+               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.verifying), mainActivity);
            } else if (params[0].equals("identify")) {
-               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.identifying));
+               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.identifying), mainActivity);
            }
 
            if (params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
@@ -178,4 +177,12 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
        while (!mIsDone) {
        }
    }
+
+    public void showProgressDialog(String title, String message, MainActivity mainActivity) {
+        mainActivity.mHandler.sendMessage(mainActivity.mHandler.obtainMessage(MainActivity.MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
+    }
+
+    public void showProgressDialog(String title, String message, EnrolActivity enrolActivity) {
+        enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
+    }
 }
