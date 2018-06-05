@@ -35,7 +35,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
        mainActivity.choice = params[0];
        do {
            if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
-               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.press_finger), mainActivity);
+               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.press_finger));
                mainActivity.mScanner.prepare();
                do {
                    startTime = System.currentTimeMillis();
@@ -56,11 +56,11 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
            }
 
            if (params[0].equals("enroll")) {
-               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.enrolling), mainActivity);
+               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.enrolling));
            } else if (params[0].equals("verify")) {
-               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.verifying), mainActivity);
+               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.verifying));
            } else if (params[0].equals("identify")) {
-               mainActivity.mTask.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.identifying), mainActivity);
+               mainActivity.showProgressDialog(mainActivity.getString(R.string.loading), mainActivity.getString(R.string.identifying));
            }
 
            if (params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {

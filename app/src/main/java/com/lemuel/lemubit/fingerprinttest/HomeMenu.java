@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.bugsnag.android.Bugsnag;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
@@ -25,6 +27,8 @@ public class HomeMenu extends AppCompatActivity {
         ButterKnife.bind(this);
         // Initialize Realm (just once per application)
         Realm.init(getApplicationContext());
+        //Initialize Bugsnag to track crash
+        Bugsnag.init(this);
         enrollBtn.setOnClickListener(v -> {
             startActivity(new Intent(HomeMenu.this, EnrolActivity.class));
         });

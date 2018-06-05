@@ -35,6 +35,7 @@ dependencies {
     debugImplementation('com.balsikandar.android:crashreporter:1.0.9') {
         exclude group: 'com.android.support', module: 'design'
     }
+    implementation 'com.bugsnag:bugsnag-android:4.+'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
