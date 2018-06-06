@@ -130,15 +130,15 @@ class Util {
                     enrolActivity.mTask.waitForDone();
                 }
                 if ((error = enrolActivity.mScanner.close()) != FingerprintScanner.RESULT_OK) {
-                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_close_failed), getFingerprintErrorString(enrolActivity, error));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_close_failed));
                 } else {
                     enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_close_success));
                 }
                 if ((error = enrolActivity.mScanner.powerOff()) != FingerprintScanner.RESULT_OK) {
-                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_power_off_failed), getFingerprintErrorString(enrolActivity, error));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_power_off_failed));
                 }
                 if ((error = Bione.exit()) != Bione.RESULT_OK) {
-                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.algorithm_cleanup_failed), getFingerprintErrorString(enrolActivity, error));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.algorithm_cleanup_failed));
                 }
                 if (finish) {
                     enrolActivity.finishActivity();
@@ -149,28 +149,23 @@ class Util {
     }
 
     static void openDevice(final EnrolActivity enrolActivity) {
+
         new Thread() {
             @Override
             public void run() {
                enrolActivity.showProgressDialog(enrolActivity.getString(R.string.loading), enrolActivity.getString(R.string.preparing_device));
                 int error;
                 if ((error = enrolActivity.mScanner.powerOn()) != FingerprintScanner.RESULT_OK) {
-                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_power_on_failed), getFingerprintErrorString(enrolActivity, error));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_power_on_failed));
                 }
                 if ((error = enrolActivity.mScanner.open()) != FingerprintScanner.RESULT_OK) {
-                 //   enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(enrolActivity.MSG_UPDATE_SN, enrolActivity.getString(R.string.fps_sn, "null")));
-                //    enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_FW_VERSION, enrolActivity.getString(R.string.fps_fw, "null")));
-                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.fingerprint_device_open_failed), getFingerprintErrorString(enrolActivity, error));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_open_failed));
                 } else {
                     Result res = enrolActivity.mScanner.getSN();
-                  //  enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_SN, enrolActivity.getString(R.string.fps_sn, (String) res.data)));
-                    res = enrolActivity.mScanner.getFirmwareVersion();
-                   // enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_UPDATE_FW_VERSION, enrolActivity.getString(R.string.fps_fw, (String) res.data)));
-                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_open_success));
-
+                   enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_open_success));
                 }
                 if ((error = Bione.initialize(enrolActivity, EnrolActivity.FP_DB_PATH)) != Bione.RESULT_OK) {
-                    enrolActivity.showErrorDialog(enrolActivity.getString(R.string.algorithm_initialization_failed), getFingerprintErrorString(enrolActivity, error));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.algorithm_initialization_failed));
                 }
                 Log.i(enrolActivity.TAG, "Fingerprint algorithm version: " + Bione.getVersion());
                 enrolActivity.dismissProgressDialog();

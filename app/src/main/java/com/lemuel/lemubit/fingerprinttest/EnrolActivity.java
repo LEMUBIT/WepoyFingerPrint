@@ -111,6 +111,7 @@ public class EnrolActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Util.openDevice(this);
+        Toast.makeText(this, "Testing in main class", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -185,7 +186,7 @@ public class EnrolActivity extends AppCompatActivity {
                     break;
                 }
                 if (res.error != FingerprintScanner.RESULT_OK) {
-                    showErrorDialog(getString(R.string.capture_image_failed), Util.getFingerprintErrorString(EnrolActivity.this, res.error));
+                    showInfoToast(getString(R.string.capture_image_failed));
                     Bugsnag.notify(new Exception());
                     break;
                 }
@@ -202,7 +203,7 @@ public class EnrolActivity extends AppCompatActivity {
                 //!todo error comes from here
                 //todo Show progress dialog is showing but error dialog is not, try and check what's going on...
                 if (res.error != Bione.RESULT_OK) {
-                    showErrorDialog(getString(R.string.enroll_failed_because_of_extract_feature), Util.getFingerprintErrorString(EnrolActivity.this, res.error));
+                    showInfoToast(getString(R.string.enroll_failed_because_of_extract_feature));
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_extract_feature));
                     Bugsnag.notify(new Exception());
                     break;
@@ -214,7 +215,7 @@ public class EnrolActivity extends AppCompatActivity {
                 res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat);
 
                 if (res.error != Bione.RESULT_OK) {
-                    showErrorDialog(getString(R.string.enroll_failed_because_of_make_template), Util.getFingerprintErrorString(EnrolActivity.this, res.error));
+                    showInfoToast(getString(R.string.enroll_failed_because_of_make_template));
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_make_template));
                     Bugsnag.notify(new Exception());
                     break;
@@ -226,7 +227,7 @@ public class EnrolActivity extends AppCompatActivity {
                 int id = Bione.getFreeID();
                 newUserId = id;
                 if (id < 0) {
-                    showErrorDialog(getString(R.string.enroll_failed_because_of_get_id), Util.getFingerprintErrorString(EnrolActivity.this, id));
+                    showInfoToast(getString(R.string.enroll_failed_because_of_get_id));
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_get_id));
                     Bugsnag.notify(new Exception());
                     break;
@@ -236,7 +237,7 @@ public class EnrolActivity extends AppCompatActivity {
 
 
                 if (ret != Bione.RESULT_OK) {
-                    showErrorDialog(getString(R.string.enroll_failed_because_of_error), Util.getFingerprintErrorString(EnrolActivity.this, ret));
+                    showInfoToast(getString(R.string.enroll_failed_because_of_error));
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_error));
                     Bugsnag.notify(new Exception());
                     break;
