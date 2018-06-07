@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.balsikandar.crashreporter.CrashReporter;
+import com.bugsnag.android.Bugsnag;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected int mId;
     protected int newUserId = -1;
     String choice;
+
+    //!Register in EnrolActivity then test here, it's crashing, use debugger to check
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -139,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         updateSingerTestText(-1, -1, -1, -1);
         // Initialize Realm (just once per application)
         Realm.init(getApplicationContext());
+        //Initialize Bugsnag to track crash
+        Bugsnag.init(this);
         // Get a Realm instance for this thread
         realm = Realm.getDefaultInstance();
     }
@@ -274,7 +279,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }.start();
 
     }
-
 
     private void closeDevice(final boolean finish) {
         new Thread() {

@@ -24,28 +24,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
-//todo get dialog to show again when checking finger print
 @SuppressLint({"SdCardPath", "HandlerLeak"})
 public class EnrolActivity extends AppCompatActivity {
     public EnrollTask mTask;
+    private Realm realm;
+    private Boolean fingerprintGood;
+    public FingerprintScanner mScanner;
+    public int mId;
+    public int newUserId = -1;
+    private String choice;
     public static final String TAG = "FingerprintDemo";
     public static final String FP_DB_PATH = "/sdcard/fp.db";
     private static final int MSG_SHOW_ERROR = 0;
     private static final int MSG_SHOW_INFO = 1;
-    private static final int MSG_UPDATE_IMAGE = 2;
-    private static final int MSG_UPDATE_TEXT = 3;
-    private static final int MSG_UPDATE_BUTTON = 4;
-    protected static final int MSG_UPDATE_SN = 5;
-    private static final int MSG_UPDATE_FW_VERSION = 6;
     protected static final int MSG_SHOW_PROGRESS_DIALOG = 7;
     private static final int MSG_DISMISS_PROGRESS_DIALOG = 8;
     private static final int MSG_FINISH_ACTIVITY = 9;
     private ProgressDialog mProgressDialog;
-    Realm realm;
-    public FingerprintScanner mScanner;
-    public int mId;
-    public int newUserId = -1;
-    String choice;
+
     @BindView(R.id.txt_name)
     EditText nameTxt;
     @BindView(R.id.txt_surname)
@@ -173,37 +169,39 @@ public class EnrolActivity extends AppCompatActivity {
             byte[] fpFeat = null, fpTemp = null;
             Result res;
             choice = params[0];
-            do {
 
+            do {
                 showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
                 mScanner.prepare();
                 do {
                     res = mScanner.capture();
                 } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
                 mScanner.finish();
+
                 if (isCancelled()) {
                     Bugsnag.leaveBreadcrumb("Finger print canceled");
                     break;
                 }
+
                 if (res.error != FingerprintScanner.RESULT_OK) {
                     showInfoToast(getString(R.string.capture_image_failed));
                     Bugsnag.notify(new Exception());
                     break;
                 }
-                fi = (FingerprintImage) res.data;
-                // Toast.makeText(EnrolActivity.this, "Fingerprint image quality is " + String.valueOf(Bione.getFingerprintQuality(fi)), Toast.LENGTH_LONG).show();
 
+                fi = (FingerprintImage) res.data;
 
                 //Enrolling
                 showProgressDialog(getString(R.string.loading), getString(R.string.enrolling));
                 Bugsnag.leaveBreadcrumb(getString(R.string.enrolling));
 
+
+                //Extract feature
                 res = Bione.extractFeature(fi);
 
-                //!todo error comes from here
-                //todo Show progress dialog is showing but error dialog is not, try and check what's going on...
                 if (res.error != Bione.RESULT_OK) {
                     showInfoToast(getString(R.string.enroll_failed_because_of_extract_feature));
+                    fingerprintGood = false;
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_extract_feature));
                     Bugsnag.notify(new Exception());
                     break;
@@ -216,6 +214,7 @@ public class EnrolActivity extends AppCompatActivity {
 
                 if (res.error != Bione.RESULT_OK) {
                     showInfoToast(getString(R.string.enroll_failed_because_of_make_template));
+                    fingerprintGood = false;
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_make_template));
                     Bugsnag.notify(new Exception());
                     break;
@@ -228,6 +227,7 @@ public class EnrolActivity extends AppCompatActivity {
                 newUserId = id;
                 if (id < 0) {
                     showInfoToast(getString(R.string.enroll_failed_because_of_get_id));
+                    fingerprintGood = false;
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_get_id));
                     Bugsnag.notify(new Exception());
                     break;
@@ -238,6 +238,7 @@ public class EnrolActivity extends AppCompatActivity {
 
                 if (ret != Bione.RESULT_OK) {
                     showInfoToast(getString(R.string.enroll_failed_because_of_error));
+                    fingerprintGood = false;
                     Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_error));
                     Bugsnag.notify(new Exception());
                     break;
@@ -246,7 +247,7 @@ public class EnrolActivity extends AppCompatActivity {
 
                 showInfoToast(getString(R.string.enroll_success) + id);
                 Bugsnag.leaveBreadcrumb(getString(R.string.enroll_success) + id);
-
+                fingerprintGood = true;
 
 
             } while (false);
@@ -258,7 +259,7 @@ public class EnrolActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            if (choice.equals("enroll")) {
+            if (choice.equals("enroll") && fingerprintGood) {
                 try {
 
                     final RealmModel user = new RealmModel(); // Create a new object
