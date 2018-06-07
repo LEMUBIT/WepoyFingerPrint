@@ -29,6 +29,10 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:26.0.0'
     implementation 'com.jakewharton:butterknife:8.4.0'
+
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.x.x'
+
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     testImplementation 'junit:junit:4.12'
     implementation 'com.airbnb.android:lottie:2.5.4'

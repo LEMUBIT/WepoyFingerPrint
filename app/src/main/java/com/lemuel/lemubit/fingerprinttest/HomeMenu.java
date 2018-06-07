@@ -5,11 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.bugsnag.android.Bugsnag;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 public class HomeMenu extends AppCompatActivity {
@@ -33,5 +37,13 @@ public class HomeMenu extends AppCompatActivity {
             startActivity(new Intent(HomeMenu.this, EnrolActivity.class));
         });
 
+        //todo used to test the RxJava
+      //  Observable.just(showIT()).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe(Toast::show);
+    }
+
+
+    public Toast showIT()
+    {
+      return Toast.makeText(HomeMenu.this, "RxJava", Toast.LENGTH_SHORT);
     }
 }

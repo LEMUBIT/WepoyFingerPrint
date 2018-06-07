@@ -167,49 +167,62 @@ public class EnrolActivity extends AppCompatActivity {
 
             FingerprintImage fi = null;
             byte[] fpFeat = null, fpTemp = null;
-            Result res;
+            Result res = null;
             choice = params[0];
-
+            int fingerPrintCount = 0;
             do {
-                showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
-                mScanner.prepare();
-                do {
-                    res = mScanner.capture();
-                } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
-                mScanner.finish();
+                int x=0;
+                while (fingerPrintCount < 3) {
+                //! todo looping 2nd and third without figerprint trigger
+                    x++;
+                    showInfoToast(x+" times");
+                    showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
+                    mScanner.prepare();
 
-                if (isCancelled()) {
-                    Bugsnag.leaveBreadcrumb("Finger print canceled");
-                    break;
+                    do {
+                        res = mScanner.capture();
+                    } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
+
+                    mScanner.finish();
+
+                    if (isCancelled()) break;
+
+                    if (res.error != FingerprintScanner.RESULT_OK) {
+                        showInfoToast(getString(R.string.capture_image_failed));
+                        Bugsnag.notify(new Exception());
+                    }
+
+                    //get fingerprint image gotten from capture
+                    fi = (FingerprintImage) res.data;
+
+                    //Enrolling
+                    showProgressDialog(getString(R.string.loading), getString(R.string.enrolling));
+                    Bugsnag.leaveBreadcrumb(getString(R.string.enrolling));
+
+
+                    //Extract feature gotten from Fingerprint image
+                    res = Bione.extractFeature(fi);
+
+                    if (res.error != Bione.RESULT_OK) {
+                        showInfoToast(getString(R.string.enroll_failed_because_of_extract_feature));
+                        fingerprintGood = false;
+                        Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_extract_feature));
+                        Bugsnag.notify(new Exception());
+                    }
+                    else
+                    {
+                        fingerPrintCount++;
+                        showInfoToast("FingerPrint "+ (fingerPrintCount+1));
+                    }
+
+
                 }
 
-                if (res.error != FingerprintScanner.RESULT_OK) {
-                    showInfoToast(getString(R.string.capture_image_failed));
-                    Bugsnag.notify(new Exception());
-                    break;
-                }
+                // todo loop upper
 
-                fi = (FingerprintImage) res.data;
-
-                //Enrolling
-                showProgressDialog(getString(R.string.loading), getString(R.string.enrolling));
-                Bugsnag.leaveBreadcrumb(getString(R.string.enrolling));
-
-
-                //Extract feature
-                res = Bione.extractFeature(fi);
-
-                if (res.error != Bione.RESULT_OK) {
-                    showInfoToast(getString(R.string.enroll_failed_because_of_extract_feature));
-                    fingerprintGood = false;
-                    Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_extract_feature));
-                    Bugsnag.notify(new Exception());
-                    break;
-                }
-
+                //todo Template made here
+                //Extract byte data gotten from Bione Feature and make Template
                 fpFeat = (byte[]) res.data;
-
-
                 res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat);
 
                 if (res.error != Bione.RESULT_OK) {

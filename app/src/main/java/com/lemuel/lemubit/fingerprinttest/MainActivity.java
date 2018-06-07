@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected int newUserId = -1;
     String choice;
 
-    //!Register in EnrolActivity then test here, it's crashing, use debugger to check
     public Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
