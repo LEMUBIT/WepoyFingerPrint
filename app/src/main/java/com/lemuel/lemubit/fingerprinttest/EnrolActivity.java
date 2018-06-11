@@ -21,10 +21,13 @@ import com.wepoy.util.Result;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 @SuppressLint({"SdCardPath", "HandlerLeak"})
-public class EnrolActivity extends AppCompatActivity {
+public class EnrolActivity extends AppCompatActivity implements EnrolView {
     public EnrollTask mTask;
     private Realm realm;
     private Boolean fingerprintGood;
@@ -97,8 +100,16 @@ public class EnrolActivity extends AppCompatActivity {
         // Get a Realm instance for this thread
         realm = Realm.getDefaultInstance();
         captureBtn.setOnClickListener(v -> {
-            mTask = new EnrollTask();
-            mTask.execute("enroll");
+            //mTask = new EnrollTask();
+            // mTask.execute("enroll");
+
+            //todo CONTINUE HERE
+            //RxJava used to get fingerprint
+            Observable.defer(() -> Observable.just(Fingerprint.getFingerPrint(getApplication(), this))
+            ).subscribeOn(Schedulers.computation()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(s -> Toast.makeText(this, "State: " + s, Toast.LENGTH_SHORT).show());
+
+
         });
     }
 
@@ -125,9 +136,6 @@ public class EnrolActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    public void dismissProgressDialog() {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_DISMISS_PROGRESS_DIALOG));
-    }
 
     public void showErrorDialog(String operation, String errString) {
         Bundle bundle = new Bundle();
@@ -136,17 +144,25 @@ public class EnrolActivity extends AppCompatActivity {
         mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_ERROR, bundle));
     }
 
-    public void showInfoToast(String info) {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_INFO, info));
-    }
-
     public void finishActivity() {
         mHandler.sendEmptyMessage(MSG_FINISH_ACTIVITY);
     }
 
+    @Override
     public void showProgressDialog(String title, String message) {
         mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
     }
+
+    @Override
+    public void dismissProgressDialog() {
+        mHandler.sendMessage(mHandler.obtainMessage(MSG_DISMISS_PROGRESS_DIALOG));
+    }
+
+    @Override
+    public void showInfoToast(String info) {
+        mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_INFO, info));
+    }
+
 
     class EnrollTask extends AsyncTask<String, Integer, Void> {
 
@@ -170,54 +186,51 @@ public class EnrolActivity extends AppCompatActivity {
             choice = params[0];
             int fingerPrintCount = 0;
             do {
-            
+
                 int x = 0;
 
 
-                do {
-                    x++;
-                    showInfoToast(x + " times");
-                    showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
-
-                    mScanner.prepare();
-                    do {
-                        res = mScanner.capture();
-                    } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
-
-
-
-                    if (isCancelled()) break;
-
-                    if (res.error != FingerprintScanner.RESULT_OK) {
-                        showInfoToast(getString(R.string.capture_image_failed));
-                        Bugsnag.notify(new Exception());
-                    }
-
-                    //get fingerprint image gotten from capture
-                    fi = (FingerprintImage) res.data;
-
-                    //Enrolling
-                    showProgressDialog(getString(R.string.loading), getString(R.string.enrolling));
-                    Bugsnag.leaveBreadcrumb(getString(R.string.enrolling));
-
-
-                    //Extract feature gotten from Fingerprint image
-                    res = Bione.extractFeature(fi);
-
-                    if (res.error != Bione.RESULT_OK) {
-                        showInfoToast(getString(R.string.enroll_failed_because_of_extract_feature));
-                        fingerprintGood = false;
-                        Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_extract_feature));
-                        Bugsnag.notify(new Exception());
-                    } else {
-                        fingerPrintCount++;
-                        showInfoToast("FingerPrint " + (fingerPrintCount + 1));
-                    }
-
-                    mScanner.finish();
-                } while(false);
-
-                
+//                do {
+//                    x++;
+//                    showInfoToast(x + " times");
+//                    showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
+//
+//                    mScanner.prepare();
+//                    do {
+//                        res = mScanner.capture();
+//                    } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
+//
+//
+//                    if (isCancelled()) break;
+//
+//                    if (res.error != FingerprintScanner.RESULT_OK) {
+//                        showInfoToast(getString(R.string.capture_image_failed));
+//                        Bugsnag.notify(new Exception());
+//                    }
+//
+//                    //get fingerprint image gotten from capture
+//                    fi = (FingerprintImage) res.data;
+//
+//                    //Enrolling
+//                    showProgressDialog(getString(R.string.loading), getString(R.string.enrolling));
+//                    Bugsnag.leaveBreadcrumb(getString(R.string.enrolling));
+//
+//
+//                    //Extract feature gotten from Fingerprint image
+//                    res = Bione.extractFeature(fi);
+//
+//                    if (res.error != Bione.RESULT_OK) {
+//                        showInfoToast(getString(R.string.enroll_failed_because_of_extract_feature));
+//                        fingerprintGood = false;
+//                        Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_extract_feature));
+//                        Bugsnag.notify(new Exception());
+//                    } else {
+//                        fingerPrintCount++;
+//                        showInfoToast("FingerPrint " + (fingerPrintCount + 1));
+//                    }
+//
+//                    mScanner.finish();
+//                } while (false);
 
 
                 //Template made here
@@ -273,6 +286,7 @@ public class EnrolActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             if (choice.equals("enroll") && fingerprintGood) {
+                //todo: Perform database operation in Model
                 try {
 
                     final RealmModel user = new RealmModel(); // Create a new object
@@ -302,14 +316,12 @@ public class EnrolActivity extends AppCompatActivity {
         protected void onCancelled() {
         }
 
+
         public void waitForDone() {
             while (!mIsDone) {
             }
         }
 
-        public void showProgressDialog(String title, String message) {
-            mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
-        }
 
     }
 }
