@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.balsikandar.crashreporter.CrashReporter;
 import com.bugsnag.android.Bugsnag;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
@@ -171,19 +170,21 @@ public class EnrolActivity extends AppCompatActivity {
             choice = params[0];
             int fingerPrintCount = 0;
             do {
-                int x=0;
-                while (fingerPrintCount < 3) {
-                //! todo looping 2nd and third without figerprint trigger
-                    x++;
-                    showInfoToast(x+" times");
-                    showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
-                    mScanner.prepare();
+            
+                int x = 0;
 
+
+                do {
+                    x++;
+                    showInfoToast(x + " times");
+                    showProgressDialog(getString(R.string.loading), getString(R.string.press_finger));
+
+                    mScanner.prepare();
                     do {
                         res = mScanner.capture();
                     } while (res.error == FingerprintScanner.NO_FINGER && !isCancelled());
 
-                    mScanner.finish();
+
 
                     if (isCancelled()) break;
 
@@ -208,19 +209,18 @@ public class EnrolActivity extends AppCompatActivity {
                         fingerprintGood = false;
                         Bugsnag.leaveBreadcrumb(getString(R.string.enroll_failed_because_of_extract_feature));
                         Bugsnag.notify(new Exception());
-                    }
-                    else
-                    {
+                    } else {
                         fingerPrintCount++;
-                        showInfoToast("FingerPrint "+ (fingerPrintCount+1));
+                        showInfoToast("FingerPrint " + (fingerPrintCount + 1));
                     }
 
+                    mScanner.finish();
+                } while(false);
 
-                }
+                
 
-                // todo loop upper
 
-                //todo Template made here
+                //Template made here
                 //Extract byte data gotten from Bione Feature and make Template
                 fpFeat = (byte[]) res.data;
                 res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat);
@@ -289,7 +289,7 @@ public class EnrolActivity extends AppCompatActivity {
 
                     Toast.makeText(EnrolActivity.this, "Enrolled in Realm", Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
-                    CrashReporter.logException(e);
+
                 }
             }
         }

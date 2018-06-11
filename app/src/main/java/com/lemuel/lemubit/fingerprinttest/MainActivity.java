@@ -24,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.balsikandar.crashreporter.CrashReporter;
 import com.bugsnag.android.Bugsnag;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
@@ -609,7 +608,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                 } catch (Exception e) {
-                    CrashReporter.logException(e);
+
                 }
             }
             if (choice.equals("identify")) {

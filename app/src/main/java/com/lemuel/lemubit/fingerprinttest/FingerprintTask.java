@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.balsikandar.crashreporter.CrashReporter;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;
@@ -153,7 +152,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
                    }
                });
            } catch (Exception e) {
-               CrashReporter.logException(e);
+
            }
        }
        if (mainActivity.choice.equals("identify")) {
