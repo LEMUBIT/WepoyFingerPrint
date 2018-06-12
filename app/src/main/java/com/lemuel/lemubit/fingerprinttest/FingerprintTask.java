@@ -182,6 +182,6 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
     }
 
     public void showProgressDialog(String title, String message, EnrolActivity enrolActivity) {
-        enrolActivity.mHandler.sendMessage(enrolActivity.mHandler.obtainMessage(MainActivity.MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
+        enrolActivity.getMHandler().sendMessage(enrolActivity.getMHandler().obtainMessage(MainActivity.MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
     }
 }
