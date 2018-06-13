@@ -28,10 +28,9 @@ class Util {
             public void run() {
                 enrolActivity.showProgressDialog(enrolActivity.getString(R.string.loading), enrolActivity.getString(R.string.closing_device));
                 int error;
-                if (enrolActivity.getMTask() != null && enrolActivity.getMTask().getStatus() != AsyncTask.Status.FINISHED) {
-                    enrolActivity.getMTask().cancel(false);
-                    enrolActivity.getMTask().waitForDone();
-                }
+                //todo check if Rxjava task is running
+
+
                 if ((error = enrolActivity.getMScanner().close()) != FingerprintScanner.RESULT_OK) {
                     enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_close_failed));
                 } else {
@@ -56,7 +55,7 @@ class Util {
         new Thread() {
             @Override
             public void run() {
-               enrolActivity.showProgressDialog(enrolActivity.getString(R.string.loading), enrolActivity.getString(R.string.preparing_device));
+                enrolActivity.showProgressDialog(enrolActivity.getString(R.string.loading), enrolActivity.getString(R.string.preparing_device));
                 int error;
                 if ((error = enrolActivity.getMScanner().powerOn()) != FingerprintScanner.RESULT_OK) {
                     enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_power_on_failed));
@@ -65,7 +64,7 @@ class Util {
                     enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_open_failed));
                 } else {
                     Result res = enrolActivity.getMScanner().getSN();
-                   enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_open_success));
+                    enrolActivity.showInfoToast(enrolActivity.getString(R.string.fingerprint_device_open_success));
                 }
                 if ((error = Bione.initialize(enrolActivity, EnrolActivity.Companion.getFP_DB_PATH())) != Bione.RESULT_OK) {
                     enrolActivity.showInfoToast(enrolActivity.getString(R.string.algorithm_initialization_failed));

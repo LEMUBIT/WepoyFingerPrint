@@ -7,10 +7,11 @@ import com.wepoy.fp.Bione
 import com.wepoy.fp.FingerprintImage
 import com.wepoy.fp.FingerprintScanner
 import com.wepoy.util.Result
+import io.reactivex.Observable
 
 //Class to get finger print data
 object Fingerprint {
-    fun getFingerPrint(application: Application, enrolView: EnrolView): FingerPrintResponse {
+    fun getFingerPrint(application: Application, enrolView: EnrolView): Result? {
         val mScanner: FingerprintScanner = FingerprintScanner.getInstance(application.applicationContext)
         var fi: FingerprintImage
         var res: Result?
@@ -58,24 +59,37 @@ object Fingerprint {
         enrolView.dismissProgressDialog()
 
         //todo check, only to be done if crash, if not next method should be called
-        enrolView.executionDone(true)
-        return FingerPrintResponse(res, state)
+        if (state == 0) {
+            res=null
+            enrolView.executionDone(true)
+        }
+        // return Observable.just(FingerPrintResponse(res, state))
+        return res
     }
 
-    fun saveFingerPrint(application: Application, result: Result, enrolView: EnrolView) {
-        val fi: FingerprintImage? = null
-        var fpFeat: ByteArray? = null
-        var fpTemp: ByteArray? = null
-        var res = result
+    fun saveFingerPrint(application: Application, result: Result, enrolView: EnrolView): Int {
+        var fpFeat: ByteArray?
+        var fpTemp: ByteArray?
+        var res: Result? = result
         var fingerprintGood: Boolean? = null
-
+        var state = "good"
+        var id=0
+        if (result==null)
+        {
+            state="bad"
+            id=-1
+        }
         do {
+            if (res == null) {
+                state = "bad"
+                break
+            }
             val x = 0
             //Extract byte data gotten from Bione Feature and make Template
-            fpFeat = res!!.data as ByteArray
+            fpFeat = res.data as ByteArray
             res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat)
 
-            if (res!!.error != Bione.RESULT_OK) {
+            if (res.error != Bione.RESULT_OK) {
                 enrolView.showInfoToast(application.getString(R.string.enroll_failed_because_of_make_template))
                 fingerprintGood = false
                 Bugsnag.leaveBreadcrumb(application.getString(R.string.enroll_failed_because_of_make_template))
@@ -83,9 +97,9 @@ object Fingerprint {
                 break
             }
 
-            fpTemp = res!!.data as ByteArray
+            fpTemp = res.data as ByteArray
 
-            val id = Bione.getFreeID()
+            id = Bione.getFreeID()
             if (id < 0) {
                 enrolView.showInfoToast(application.getString(R.string.enroll_failed_because_of_get_id))
                 fingerprintGood = false
@@ -107,6 +121,8 @@ object Fingerprint {
         enrolView.dismissProgressDialog()
         enrolView.executionDone(true)
 
+        return id
     }
+
 
 }
