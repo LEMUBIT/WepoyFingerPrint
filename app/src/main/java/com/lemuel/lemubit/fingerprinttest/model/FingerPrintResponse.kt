@@ -1,4 +1,4 @@
-package com.lemuel.lemubit.fingerprinttest
+package com.lemuel.lemubit.fingerprinttest.model
 
 import com.wepoy.util.Result
 

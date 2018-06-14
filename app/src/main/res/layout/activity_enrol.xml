@@ -7,7 +7,7 @@
     android:id="@+id/enrollActivity"
     android:padding="10dp"
     android:background="#162b3b"
-    tools:context=".EnrolActivity">
+    tools:context=".view.EnrolActivity">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation_view"

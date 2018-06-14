@@ -1,7 +1,6 @@
 package com.lemuel.lemubit.fingerprinttest;
 
 import android.annotation.SuppressLint;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -12,7 +11,6 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -21,10 +19,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bugsnag.android.Bugsnag;
+import com.lemuel.lemubit.fingerprinttest.model.RealmModel;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;

@@ -1,4 +1,4 @@
-package com.lemuel.lemubit.fingerprinttest
+package com.lemuel.lemubit.fingerprinttest.view
 
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
@@ -8,6 +8,12 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Toast
+import com.lemuel.lemubit.fingerprinttest.R
+import com.lemuel.lemubit.fingerprinttest.helper.Util
+import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
+import com.lemuel.lemubit.fingerprinttest.model.RealmModel
+import com.lemuel.lemubit.fingerprinttest.presenter.EnrolPresenter
+import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolView
 import com.wepoy.fp.FingerprintScanner
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -16,19 +22,16 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_enrol.*
-import org.reactivestreams.Subscription
 
 @SuppressLint("SdCardPath", "HandlerLeak")
 class EnrolActivity : AppCompatActivity(), EnrolView {
 
     private var mIsDone = false
     private var realm: Realm? = null
-    private var fingerprintGood: Boolean? = null
     lateinit var mScanner: FingerprintScanner
-    var mId: Int = 0
-    var newUserId = -1
-    private var choice: String? = null
     private var mProgressDialog: ProgressDialog? = null
+    lateinit var enrolPresenter:EnrolPresenter
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +46,12 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
 
         realm = Realm.getDefaultInstance()
 
-        //TODO next is to try three times
+        enrolPresenter= EnrolPresenter()
+
+        //?using just one fingerprint for now
         val fingerObserver = Observable.defer {
-            Observable.just(Fingerprint.getFingerPrint(application, this)).take(3)
-                    .map { t -> Fingerprint.saveFingerPrint(application, t, this) }
+            Observable.just(Fingerprint.getFingerPrint(application, this))
+                    .map { result -> Fingerprint.saveFingerPrint(application, result, this) }
         }.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
 
@@ -94,7 +99,6 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
         mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_INFO, info))
     }
 
-
     companion object {
         val TAG = "FingerprintDemo"
         val FP_DB_PATH = "/sdcard/fp.db"
@@ -133,16 +137,7 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
 
     private val observer = object : Observer<Int> {
         override fun onNext(id: Int) {
-            showInfoToast("ID= $id")
-            try {
-                val user = RealmModel() // Create a new object
-                user.name = txt_name.text.toString()
-                user.id = id
-                realm!!.executeTransaction { realm -> realm.copyToRealmOrUpdate(user) }
-                Toast.makeText(this@EnrolActivity, "Enrolled in Realm", Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                showInfoToast("Realm Error")
-            }
+         showInfoToast(enrolPresenter.registerNewUser(application,id,txt_name.text.toString()))
         }
 
         override fun onComplete() {
@@ -152,7 +147,6 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
         override fun onSubscribe(d: Disposable) {
             showInfoToast("subscribed")
         }
-
 
         override fun onError(e: Throwable) {
             showInfoToast("Error received: " + e.message)

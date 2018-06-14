@@ -1,13 +1,14 @@
-package com.lemuel.lemubit.fingerprinttest
+package com.lemuel.lemubit.fingerprinttest.model
 
 import android.app.Application
 
 import com.bugsnag.android.Bugsnag
+import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolView
+import com.lemuel.lemubit.fingerprinttest.R
 import com.wepoy.fp.Bione
 import com.wepoy.fp.FingerprintImage
 import com.wepoy.fp.FingerprintScanner
 import com.wepoy.util.Result
-import io.reactivex.Observable
 
 //Class to get finger print data
 object Fingerprint {

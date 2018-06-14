@@ -1,7 +1,8 @@
-package com.lemuel.lemubit.fingerprinttest;
+package com.lemuel.lemubit.fingerprinttest.helper;
 
 import android.app.Activity;
 
+import com.lemuel.lemubit.fingerprinttest.R;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintScanner;
 

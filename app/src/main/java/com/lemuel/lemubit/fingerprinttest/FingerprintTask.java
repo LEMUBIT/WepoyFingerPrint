@@ -4,6 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.lemuel.lemubit.fingerprinttest.helper.ErrorStrings;
+//import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity;
+import com.lemuel.lemubit.fingerprinttest.model.RealmModel;
+import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;
@@ -126,7 +130,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
            }
 
            if (params[0].equals("show") || params[0].equals("enroll") || params[0].equals("verify") || params[0].equals("identify")) {
-               Util.updateFingerprintImage(mainActivity, fi);
+             //  Util.updateFingerprintImage(mainActivity, fi);
            }
        } while (false);
 

@@ -1,9 +1,11 @@
-package com.lemuel.lemubit.fingerprinttest
+package com.lemuel.lemubit.fingerprinttest.view
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import com.bugsnag.android.Bugsnag
+import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity
+import com.lemuel.lemubit.fingerprinttest.R
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_home_menu.*
 
