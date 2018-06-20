@@ -10,5 +10,4 @@ class EnrolPresenter {
         return realmModel.registerNewUser(context, ID, name)
     }
 
-
 }

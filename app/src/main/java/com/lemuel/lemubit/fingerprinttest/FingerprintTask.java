@@ -50,7 +50,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
                    break;
                }
                if (res.error != FingerprintScanner.RESULT_OK) {
-                   mainActivity.showErrorDialog(mainActivity.getString(R.string.capture_image_failed), ErrorStrings.getFingerprintErrorString(mainActivity, res.error));
+                   mainActivity.showErrorDialog(mainActivity.getString(R.string.capture_image_failed), ErrorStrings.INSTANCE.getFingerprintErrorString(mainActivity, res.error));
                    break;
                }
                fi = (FingerprintImage) res.data;
@@ -71,7 +71,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
                res = Bione.extractFeature(fi);
                extractTime = System.currentTimeMillis() - startTime;
                if (res.error != Bione.RESULT_OK) {
-                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_extract_feature), ErrorStrings.getFingerprintErrorString(mainActivity, res.error));
+                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_extract_feature), ErrorStrings.INSTANCE.getFingerprintErrorString(mainActivity, res.error));
                    break;
                }
                fpFeat = (byte[]) res.data;
@@ -82,7 +82,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
                res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat);
                generalizeTime = System.currentTimeMillis() - startTime;
                if (res.error != Bione.RESULT_OK) {
-                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_make_template), ErrorStrings.getFingerprintErrorString(mainActivity, res.error));
+                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_make_template), ErrorStrings.INSTANCE.getFingerprintErrorString(mainActivity, res.error));
                    break;
                }
                fpTemp = (byte[]) res.data;
@@ -90,7 +90,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
                int id = Bione.getFreeID();
                mainActivity.newUserId = id;
                if (id < 0) {
-                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_get_id), ErrorStrings.getFingerprintErrorString(mainActivity, id));
+                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_get_id), ErrorStrings.INSTANCE.getFingerprintErrorString(mainActivity, id));
                    break;
 
                }
@@ -98,7 +98,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
 
 
                if (ret != Bione.RESULT_OK) {
-                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_error), ErrorStrings.getFingerprintErrorString(mainActivity, ret));
+                   mainActivity.showErrorDialog(mainActivity.getString(R.string.enroll_failed_because_of_error), ErrorStrings.INSTANCE.getFingerprintErrorString(mainActivity, ret));
                    break;
                }
                mainActivity.mId = id;
@@ -108,7 +108,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
                res = Bione.verify(mainActivity.mId, fpFeat);
                verifyTime = System.currentTimeMillis() - startTime;
                if (res.error != Bione.RESULT_OK) {
-                   mainActivity.showErrorDialog(mainActivity.getString(R.string.verify_failed_because_of_error), ErrorStrings.getFingerprintErrorString(mainActivity, res.error));
+                   mainActivity.showErrorDialog(mainActivity.getString(R.string.verify_failed_because_of_error), ErrorStrings.INSTANCE.getFingerprintErrorString(mainActivity, res.error));
                    break;
                }
                if ((Boolean) res.data) {
@@ -122,7 +122,7 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
                mainActivity.newUserId = id;
                verifyTime = System.currentTimeMillis() - startTime;
                if (id < 0) {
-                   mainActivity.showErrorDialog(mainActivity.getString(R.string.identify_failed_because_of_error), ErrorStrings.getFingerprintErrorString(mainActivity, id));
+                   mainActivity.showErrorDialog(mainActivity.getString(R.string.identify_failed_because_of_error), ErrorStrings.INSTANCE.getFingerprintErrorString(mainActivity, id));
                    break;
                }
 

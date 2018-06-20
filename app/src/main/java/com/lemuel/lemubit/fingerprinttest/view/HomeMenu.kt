@@ -9,6 +9,7 @@ import com.lemuel.lemubit.fingerprinttest.R
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_home_menu.*
 
+
 class HomeMenu : AppCompatActivity() {
 
 
