@@ -12,6 +12,5 @@ public class TakeAttendance extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_attendance);
 
-
     }
 }
