@@ -3,7 +3,7 @@ package com.lemuel.lemubit.fingerprinttest.model
 import android.app.Application
 import com.bugsnag.android.Bugsnag
 import com.lemuel.lemubit.fingerprinttest.R
-import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolView
+import com.lemuel.lemubit.fingerprinttest.model.modelInterface.fingerPrintInterface
 import com.wepoy.fp.Bione
 import com.wepoy.fp.FingerprintImage
 import com.wepoy.fp.FingerprintScanner
@@ -13,14 +13,14 @@ import com.wepoy.util.Result
 object Fingerprint {
 
     /**@Returns the raw result of fingerprint scan**/
-    fun getFingerPrint(application: Application, enrolView: EnrolView): Result? {
+    fun getFingerPrint(application: Application, fingerPrintInterface: fingerPrintInterface): Result? {
         val mScanner: FingerprintScanner = FingerprintScanner.getInstance(application.applicationContext)
         var fi: FingerprintImage
         var res: Result?
         var fingerPrintCount = 0
 
         do {
-            enrolView.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.press_finger))
+            fingerPrintInterface.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.press_finger))
 
             mScanner.prepare()
 
@@ -29,37 +29,37 @@ object Fingerprint {
 
 
             if (res.error != FingerprintScanner.RESULT_OK) {
-                enrolView.showInfoToast(application.getString(R.string.capture_image_failed))
+                fingerPrintInterface.showInfoToast(application.getString(R.string.capture_image_failed))
                 Bugsnag.notify(Exception())
             }
 
             fi = res.data as FingerprintImage
 
-            enrolView.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.enrolling))
+            fingerPrintInterface.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.enrolling))
 
             Bugsnag.leaveBreadcrumb(application.getString(R.string.enrolling))
 
             res = Bione.extractFeature(fi)
 
             if (res.error != Bione.RESULT_OK) {
-                enrolView.showInfoToast(application.getString(R.string.enroll_failed_because_of_extract_feature))
+                fingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_extract_feature))
                 Bugsnag.leaveBreadcrumb(application.getString(R.string.enroll_failed_because_of_extract_feature))
                 Bugsnag.notify(Exception())
             } else {
                 fingerPrintCount++
-                enrolView.showInfoToast("FingerPrint " + (fingerPrintCount + 1))
+                fingerPrintInterface.showInfoToast("FingerPrint " + (fingerPrintCount + 1))
             }
 
             mScanner.finish()
         } while (false)
 
-        enrolView.dismissProgressDialog()
+        fingerPrintInterface.dismissProgressDialog()
 
         return res
     }
 
     /**@Returns the ID of saved fingerprint data**/
-    fun saveFingerPrint(application: Application, result: Result, enrolView: EnrolView): Int {
+    fun saveFingerPrint(application: Application, result: Result, fingerPrintInterface: fingerPrintInterface): Int {
         var fpFeat: ByteArray?
         var fpTemp: ByteArray?
         var res: Result? = result
@@ -74,7 +74,7 @@ object Fingerprint {
             res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat)
 
             if (res.error != Bione.RESULT_OK) {
-                enrolView.showInfoToast(application.getString(R.string.enroll_failed_because_of_make_template))
+                fingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_make_template))
                 Bugsnag.leaveBreadcrumb(application.getString(R.string.enroll_failed_because_of_make_template))
                 Bugsnag.notify(Exception())
                 break
@@ -84,26 +84,26 @@ object Fingerprint {
             id = Bione.getFreeID()
 
             if (id < 0) {
-                enrolView.showInfoToast(application.getString(R.string.enroll_failed_because_of_get_id))
+                fingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_get_id))
                 break
             }
 
             val ret = Bione.enroll(id, fpTemp)
 
             if (ret != Bione.RESULT_OK) {
-                enrolView.showInfoToast(application.getString(R.string.enroll_failed_because_of_error))
+                fingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_error))
                 break
             }
 
-            enrolView.showInfoToast(application.getString(R.string.enroll_success) + id)
+            fingerPrintInterface.showInfoToast(application.getString(R.string.enroll_success) + id)
 
         } while (false)
 
-        enrolView.dismissProgressDialog()
+        fingerPrintInterface.dismissProgressDialog()
         return id
     }
 
-    fun getUserID(application: Application, result: Result, enrolView: EnrolView): Int? {
+    fun getUserID(result: Result): Int? {
         var fpFeat: ByteArray?
         var res: Result? = result
         var userID: Int? = null

@@ -613,7 +613,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (newUserId >= 0) {
                     RealmResults<RealmModel> realmResult = realm.where(RealmModel.class)
                             .equalTo("id", newUserId).findAll();
-                    //todo continue from here
                     Toast.makeText(MainActivity.this, "Welcome " + realmResult.get(0).getName(), Toast.LENGTH_SHORT).show();
                 }
             }

@@ -6,14 +6,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.support.v7.app.AppCompatActivity
-import android.view.KeyEvent
 import android.widget.Toast
 import com.lemuel.lemubit.fingerprinttest.R
-import com.lemuel.lemubit.fingerprinttest.helper.Util
 import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
+import com.lemuel.lemubit.fingerprinttest.model.modelInterface.fingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.presenter.EnrolPresenter
-import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolView
-import com.wepoy.fp.FingerprintScanner
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -23,9 +20,8 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_enrol.*
 
 @SuppressLint("SdCardPath", "HandlerLeak")
-class EnrolActivity : AppCompatActivity(), EnrolView {
+class EnrolActivity : AppCompatActivity(), fingerPrintInterface {
     private var realm: Realm? = null
-    lateinit var mScanner: FingerprintScanner
     private var mProgressDialog: ProgressDialog? = null
     lateinit var enrolPresenter: EnrolPresenter
 
@@ -33,7 +29,7 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enrol)
-        mScanner = FingerprintScanner.getInstance(applicationContext)
+
 
         realm = Realm.getDefaultInstance()
 
@@ -48,28 +44,6 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
 
         btn_capture.setOnClickListener { fingerObserver.subscribe(observer) }
 
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        Util.openDevice(this)
-        Toast.makeText(this, "Testing in main class", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Util.closeDevice(this, false)
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_BACK -> {
-                Util.closeDevice(this, true)
-                return true
-            }
-        }
-        return super.onKeyDown(keyCode, event)
     }
 
     override fun setProgressDialog() {
@@ -134,7 +108,7 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
 
     private val observer = object : Observer<Int> {
         override fun onNext(id: Int) {
-            showInfoToast(enrolPresenter.registerNewUser(application, id, txt_name.text.toString()))
+            showInfoToast(enrolPresenter.registerNewUserInLocalDB(application, id, txt_name.text.toString()))
         }
 
         override fun onComplete() {
