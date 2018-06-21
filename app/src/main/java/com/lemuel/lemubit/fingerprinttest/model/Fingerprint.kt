@@ -1,15 +1,13 @@
 package com.lemuel.lemubit.fingerprinttest.model
 
 import android.app.Application
-
 import com.bugsnag.android.Bugsnag
-import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolView
 import com.lemuel.lemubit.fingerprinttest.R
+import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolView
 import com.wepoy.fp.Bione
 import com.wepoy.fp.FingerprintImage
 import com.wepoy.fp.FingerprintScanner
 import com.wepoy.util.Result
-import io.reactivex.Observable
 
 /*Handles the getting and saving of Fingerprint data*/
 object Fingerprint {
@@ -65,14 +63,13 @@ object Fingerprint {
         var fpFeat: ByteArray?
         var fpTemp: ByteArray?
         var res: Result? = result
-        var id=0
+        var id = 0
 
-        if (result==null)
-            id=-1
+        if (result == null)
+            id = -1
 
         do {
             if (res == null) break
-
             fpFeat = res.data as ByteArray
             res = Bione.makeTemplate(fpFeat, fpFeat, fpFeat)
 
@@ -106,5 +103,18 @@ object Fingerprint {
         return id
     }
 
+    fun getUserID(application: Application, result: Result, enrolView: EnrolView): Int? {
+        var fpFeat: ByteArray?
+        var res: Result? = result
+        var userID: Int? = null
+
+        do {
+            if (res == null) break
+            fpFeat = res.data as ByteArray
+            userID = Bione.identify(fpFeat);
+        } while (false)
+
+        return userID
+    }
 
 }

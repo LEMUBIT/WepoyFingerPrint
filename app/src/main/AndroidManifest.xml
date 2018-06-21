@@ -11,28 +11,32 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">    
-       <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
+        <activity android:name=".MainActivity">
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-        <!--</intent-filter>-->
-        
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
+
         </activity>
         <activity
             android:name=".view.HomeMenu"
             android:label="Digital Attendance Record">
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.EnrolActivity"></activity>
+        <activity android:name=".view.EnrolActivity" />
 
         <meta-data
             android:name="com.bugsnag.android.API_KEY"
-            android:value="e9bb1eb5ac80557313233326eb05908f"/>
+            android:value="e9bb1eb5ac80557313233326eb05908f" />
+
+        <activity android:name=".view.TakeAttendance"></activity>
     </application>
 
 </manifest>

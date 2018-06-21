@@ -2,16 +2,15 @@ package com.lemuel.lemubit.fingerprinttest.view
 
 import android.annotation.SuppressLint
 import android.app.ProgressDialog
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.view.KeyEvent
 import android.widget.Toast
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.helper.Util
 import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
-import com.lemuel.lemubit.fingerprinttest.model.RealmModel
 import com.lemuel.lemubit.fingerprinttest.presenter.EnrolPresenter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolView
 import com.wepoy.fp.FingerprintScanner
@@ -22,7 +21,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_enrol.*
-import org.reactivestreams.Subscription
 
 @SuppressLint("SdCardPath", "HandlerLeak")
 class EnrolActivity : AppCompatActivity(), EnrolView {
