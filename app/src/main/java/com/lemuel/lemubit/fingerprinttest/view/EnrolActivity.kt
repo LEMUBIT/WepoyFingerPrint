@@ -22,15 +22,14 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_enrol.*
+import org.reactivestreams.Subscription
 
 @SuppressLint("SdCardPath", "HandlerLeak")
 class EnrolActivity : AppCompatActivity(), EnrolView {
-
-    private var mIsDone = false
     private var realm: Realm? = null
     lateinit var mScanner: FingerprintScanner
     private var mProgressDialog: ProgressDialog? = null
-    lateinit var enrolPresenter:EnrolPresenter
+    lateinit var enrolPresenter: EnrolPresenter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,15 +37,9 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
         setContentView(R.layout.activity_enrol)
         mScanner = FingerprintScanner.getInstance(applicationContext)
 
-        mProgressDialog = ProgressDialog(this)
-        mProgressDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        mProgressDialog!!.setIcon(android.R.drawable.ic_dialog_info)
-        mProgressDialog!!.isIndeterminate = false
-        mProgressDialog!!.setCancelable(false)
-
         realm = Realm.getDefaultInstance()
 
-        enrolPresenter= EnrolPresenter()
+        enrolPresenter = EnrolPresenter(this)
 
         //?using just one fingerprint for now
         val fingerObserver = Observable.defer {
@@ -56,11 +49,9 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
                 .observeOn(AndroidSchedulers.mainThread())
 
         btn_capture.setOnClickListener { fingerObserver.subscribe(observer) }
+
     }
 
-    override fun executionDone(done: Boolean?) {
-        mIsDone = done!!
-    }
 
     override fun onResume() {
         super.onResume()
@@ -83,8 +74,12 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
         return super.onKeyDown(keyCode, event)
     }
 
-    fun finishActivity() {
-        mHandler.sendEmptyMessage(MSG_FINISH_ACTIVITY)
+    override fun setProgressDialog() {
+        mProgressDialog = ProgressDialog(this)
+        mProgressDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        mProgressDialog!!.setIcon(android.R.drawable.ic_dialog_info)
+        mProgressDialog!!.isIndeterminate = false
+        mProgressDialog!!.setCancelable(false)
     }
 
     override fun showProgressDialog(title: String, message: String) {
@@ -97,6 +92,10 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
 
     override fun showInfoToast(info: String) {
         mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_INFO, info))
+    }
+
+    fun finishActivity() {
+        mHandler.sendEmptyMessage(MSG_FINISH_ACTIVITY)
     }
 
     companion object {
@@ -137,7 +136,7 @@ class EnrolActivity : AppCompatActivity(), EnrolView {
 
     private val observer = object : Observer<Int> {
         override fun onNext(id: Int) {
-         showInfoToast(enrolPresenter.registerNewUser(application,id,txt_name.text.toString()))
+            showInfoToast(enrolPresenter.registerNewUser(application, id, txt_name.text.toString()))
         }
 
         override fun onComplete() {

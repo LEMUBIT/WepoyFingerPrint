@@ -5,7 +5,7 @@ public interface EnrolView {
 
     void dismissProgressDialog();
 
-    void showInfoToast(String info);
+    void setProgressDialog();
 
-    void executionDone(Boolean done);
+    void showInfoToast(String info);
 }
