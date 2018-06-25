@@ -1,12 +1,10 @@
 package com.lemuel.lemubit.fingerprinttest.view
 
 import android.annotation.SuppressLint
-import android.app.ProgressDialog
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import com.afollestad.materialdialogs.MaterialDialog
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.EnrolPresenter
@@ -19,12 +17,13 @@ import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_enrol.*
 
+
 @SuppressLint("SdCardPath", "HandlerLeak")
 class EnrolActivity : AppCompatActivity(), FingerPrintInterface {
     private var realm: Realm? = null
-    private var mProgressDialog: ProgressDialog? = null
     lateinit var enrolPresenter: EnrolPresenter
-
+    lateinit var dialogBuilder: MaterialDialog.Builder
+    lateinit var dialog: MaterialDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,63 +46,28 @@ class EnrolActivity : AppCompatActivity(), FingerPrintInterface {
     }
 
     override fun setProgressDialog() {
-        mProgressDialog = ProgressDialog(this)
-        mProgressDialog!!.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-        mProgressDialog!!.setIcon(android.R.drawable.ic_dialog_info)
-        mProgressDialog!!.isIndeterminate = false
-        mProgressDialog!!.setCancelable(false)
+        dialogBuilder = MaterialDialog.Builder(this)
+                .title("hey testing")
+                .content(R.string.enrol)
+                .progress(true, 0)
+                .progressIndeterminateStyle(true)
+        dialog = dialogBuilder.build()
+
     }
 
     override fun showProgressDialog(title: String, message: String) {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_PROGRESS_DIALOG, arrayOf(title, message)))
+        this.runOnUiThread { dialog.show() }
     }
 
     override fun dismissProgressDialog() {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_DISMISS_PROGRESS_DIALOG))
+        this.runOnUiThread { dialog.dismiss() }
     }
 
     override fun showInfoToast(info: String) {
-        mHandler.sendMessage(mHandler.obtainMessage(MSG_SHOW_INFO, info))
-    }
-
-    fun finishActivity() {
-        mHandler.sendEmptyMessage(MSG_FINISH_ACTIVITY)
+        this.runOnUiThread { Toast.makeText(this@EnrolActivity, info, Toast.LENGTH_SHORT).show() }
     }
 
     companion object {
-        val TAG = "FingerprintDemo"
-        val FP_DB_PATH = "/sdcard/fp.db"
-        private val MSG_SHOW_ERROR = 0
-        private val MSG_SHOW_INFO = 1
-        protected val MSG_SHOW_PROGRESS_DIALOG = 7
-        private val MSG_DISMISS_PROGRESS_DIALOG = 8
-        private val MSG_FINISH_ACTIVITY = 9
-    }
-
-    var mHandler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
-            when (msg.what) {
-                MSG_SHOW_ERROR -> {
-                    showDialog(0, msg.obj as Bundle)
-                }
-                MSG_SHOW_INFO -> {
-                    Toast.makeText(this@EnrolActivity, msg.obj as String, Toast.LENGTH_SHORT).show()
-                }
-
-                MSG_SHOW_PROGRESS_DIALOG -> {
-                    val info = msg.obj as Array<String>
-                    mProgressDialog!!.setTitle(info[0])
-                    mProgressDialog!!.setMessage(info[1])
-                    mProgressDialog!!.show()
-                }
-                MSG_DISMISS_PROGRESS_DIALOG -> {
-                    mProgressDialog!!.dismiss()
-                }
-                MSG_FINISH_ACTIVITY -> {
-                    finish()
-                }
-            }
-        }
     }
 
     private val observer = object : Observer<Int> {

@@ -1,5 +1,11 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
     <string name="app_name">FingerPrintTest</string>
+
+
+    <string name="enrol">Enrol fingerprint</string>
+
+
     <string name="fingerprint">Fingerprint Device</string>
     <string name="loading">Loading</string>
     <string name="preparing_device">Device is preparing, please wait…</string>

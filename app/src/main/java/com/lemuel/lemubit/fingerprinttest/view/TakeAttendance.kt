@@ -1,10 +1,10 @@
 package com.lemuel.lemubit.fingerprinttest.view
 
-import android.app.ProgressDialog
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
+import android.widget.Toast
+import com.afollestad.materialdialogs.MaterialDialog
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
@@ -18,9 +18,13 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_take_attendance.*
 
 class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendanceView {
-    private var mProgressDialog: ProgressDialog? = null
     lateinit var takeAttendancePresenter: TakeAttendancePresenter
     lateinit var mPlayer: MediaPlayer
+    var mPlayerInitialized = false
+
+    lateinit var dialogBuilder: MaterialDialog.Builder
+    lateinit var dialog: MaterialDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_take_attendance)
@@ -40,7 +44,9 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
 
     override fun onDestroy() {
         super.onDestroy()
-        mPlayer.release()
+        if (mPlayerInitialized) {
+            mPlayer.release()
+        }
     }
 
     override fun onUpdateInfoTextView(info: String?) {
@@ -50,23 +56,28 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
     override fun onPlayNotificationSound(res: Int) {
         mPlayer = MediaPlayer.create(this@TakeAttendance, res)
         mPlayer.start()
-    }
-
-    override fun showProgressDialog(title: String?, message: String?) {
-        // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-        Log.d("Hey!", message)
-    }
-
-    override fun dismissProgressDialog() {
-        Log.d("HEY!", "Dismiss progressDialog")
+        mPlayerInitialized = true
     }
 
     override fun setProgressDialog() {
-        Log.d("HEY!", "Set progressDialog")
+        dialogBuilder = MaterialDialog.Builder(this)
+                .title("hey testing")
+                .content(R.string.enrol)
+                .progress(true, 0)
+                .progressIndeterminateStyle(true)
+        dialog = dialogBuilder.build()
+    }
+
+    override fun showProgressDialog(title: String?, message: String?) {
+        this.runOnUiThread { dialog.show() }
+    }
+
+    override fun dismissProgressDialog() {
+        this.runOnUiThread { dialog.dismiss() }
     }
 
     override fun showInfoToast(info: String?) {
-        Log.d("HEY!", info)
+        this.runOnUiThread { Toast.makeText(this@TakeAttendance, info, Toast.LENGTH_SHORT).show() }
     }
 
     private val observer = object : Observer<Int?> {
@@ -75,17 +86,15 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
         }
 
         override fun onComplete() {
-            Log.d("HEY!", "Completed")
+            showInfoToast("Completed")
         }
 
         override fun onSubscribe(d: Disposable) {
-            Log.d("Hey!", "subscribed")
+            showInfoToast("subscribed")
         }
 
-
-        //!TODO stopped and used text to check error, toast not able to show from RxJava. Sort out sending of only important msg to user
         override fun onError(e: Throwable) {
-            txt_currentTime.text = e.message
+            showInfoToast("Error received: " + e.message)
         }
 
     }
