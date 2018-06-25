@@ -1,11 +1,12 @@
 package com.lemuel.lemubit.fingerprinttest.view
 
 import android.app.ProgressDialog
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.lemuel.lemubit.fingerprinttest.R
-import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
+import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
@@ -18,13 +19,13 @@ import kotlinx.android.synthetic.main.activity_take_attendance.*
 
 class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendanceView {
     private var mProgressDialog: ProgressDialog? = null
-    lateinit var takeAttendancePresenter:TakeAttendancePresenter
-
+    lateinit var takeAttendancePresenter: TakeAttendancePresenter
+    lateinit var mPlayer: MediaPlayer
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_take_attendance)
 
-        takeAttendancePresenter= TakeAttendancePresenter()
+        takeAttendancePresenter = TakeAttendancePresenter()
 
         val fingerObserver = Observable.defer {
             Observable.just(Fingerprint.getFingerPrint(application, this))
@@ -37,8 +38,18 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mPlayer.release()
+    }
+
     override fun onUpdateInfoTextView(info: String?) {
-        txt_currentTime.setText(info)
+        txt_currentTime.text = info
+    }
+
+    override fun onPlayNotificationSound(res: Int) {
+        mPlayer = MediaPlayer.create(this@TakeAttendance, res)
+        mPlayer.start()
     }
 
     override fun showProgressDialog(title: String?, message: String?) {
@@ -46,7 +57,7 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
         Log.d("Hey!", message)
     }
 
-    override fun dismissProgressDialog()  {
+    override fun dismissProgressDialog() {
         Log.d("HEY!", "Dismiss progressDialog")
     }
 
@@ -60,7 +71,7 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
-           takeAttendancePresenter.getUserInfo(id,this@TakeAttendance)
+            takeAttendancePresenter.getUserInfo(id, this@TakeAttendance)
         }
 
         override fun onComplete() {
@@ -74,7 +85,7 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
 
         //!TODO stopped and used text to check error, toast not able to show from RxJava. Sort out sending of only important msg to user
         override fun onError(e: Throwable) {
-            txt_currentTime.setText(e.message)
+            txt_currentTime.text = e.message
         }
 
     }

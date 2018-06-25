@@ -1,4 +1,4 @@
-package com.lemuel.lemubit.fingerprinttest.model
+package com.lemuel.lemubit.fingerprinttest.operations
 
 import android.app.Application
 import com.bugsnag.android.Bugsnag
@@ -17,7 +17,6 @@ object Fingerprint {
         val mScanner: FingerprintScanner = FingerprintScanner.getInstance(application.applicationContext)
         var fi: FingerprintImage
         var res: Result?
-        var fingerPrintCount = 0
 
         do {
             FingerPrintInterface.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.press_finger))
@@ -30,7 +29,6 @@ object Fingerprint {
 
             if (res.error != FingerprintScanner.RESULT_OK) {
                 FingerPrintInterface.showInfoToast(application.getString(R.string.capture_image_failed))
-                Bugsnag.notify(Exception())
             }
 
             fi = res.data as FingerprintImage
@@ -43,11 +41,6 @@ object Fingerprint {
 
             if (res.error != Bione.RESULT_OK) {
                 FingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_extract_feature))
-                Bugsnag.leaveBreadcrumb(application.getString(R.string.enroll_failed_because_of_extract_feature))
-                Bugsnag.notify(Exception())
-            } else {
-                fingerPrintCount++
-                FingerPrintInterface.showInfoToast("FingerPrint " + (fingerPrintCount + 1))
             }
 
             mScanner.finish()
@@ -75,8 +68,6 @@ object Fingerprint {
 
             if (res.error != Bione.RESULT_OK) {
                 FingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_make_template))
-                Bugsnag.leaveBreadcrumb(application.getString(R.string.enroll_failed_because_of_make_template))
-                Bugsnag.notify(Exception())
                 break
             }
 

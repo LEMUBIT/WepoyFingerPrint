@@ -8,7 +8,7 @@ import android.os.Message
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.lemuel.lemubit.fingerprinttest.R
-import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
+import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.EnrolPresenter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import io.reactivex.Observable
