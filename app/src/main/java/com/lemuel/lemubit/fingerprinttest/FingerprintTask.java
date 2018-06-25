@@ -5,9 +5,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.lemuel.lemubit.fingerprinttest.helper.ErrorStrings;
-//import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity;
 import com.lemuel.lemubit.fingerprinttest.model.RealmModel;
-import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity;
 import com.wepoy.fp.Bione;
 import com.wepoy.fp.FingerprintImage;
 import com.wepoy.fp.FingerprintScanner;
@@ -15,6 +13,8 @@ import com.wepoy.util.Result;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+
+//import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity;
 
 class FingerprintTask extends AsyncTask<String, Integer, Void> {
     private MainActivity mainActivity;
@@ -181,11 +181,5 @@ class FingerprintTask extends AsyncTask<String, Integer, Void> {
        }
    }
 
-    public void showProgressDialog(String title, String message, MainActivity mainActivity) {
-        mainActivity.mHandler.sendMessage(mainActivity.mHandler.obtainMessage(MainActivity.MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
-    }
 
-    public void showProgressDialog(String title, String message, EnrolActivity enrolActivity) {
-        enrolActivity.getMHandler().sendMessage(enrolActivity.getMHandler().obtainMessage(MainActivity.MSG_SHOW_PROGRESS_DIALOG, new String[]{title, message}));
-    }
 }

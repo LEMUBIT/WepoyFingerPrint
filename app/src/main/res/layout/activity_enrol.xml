@@ -2,11 +2,10 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/enrollActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/enrollActivity"
     android:padding="10dp"
-    android:background="#162b3b"
     tools:context=".view.EnrolActivity">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -19,11 +18,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="newUser.json"
-       />
+        app:lottie_fileName="newUser.json" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="17dp"
+        android:background="@color/background"
+        app:layout_constraintBottom_toTopOf="@+id/txt_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/animation_view" />
     <EditText
         android:id="@+id/txt_name"
+        style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
@@ -35,7 +46,6 @@
         android:gravity="center"
         android:hint="Name"
         android:inputType="textPersonName"
-        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,18 +53,18 @@
 
     <EditText
         android:id="@+id/txt_surname"
+        style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="SurName"
-        android:gravity="center"
-        android:fontFamily="sans-serif"
-        android:textSize="30sp"
         android:background="#fff"
+        android:ems="10"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:hint="SurName"
+        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,37 +72,38 @@
 
     <EditText
         android:id="@+id/txt_jobrole"
+        style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Job Role"
-        android:gravity="center"
-        android:textSize="30sp"
-        android:fontFamily="sans-serif"
         android:background="#fff"
+        android:ems="10"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:hint="Job Role"
+        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_surname" />
 
     <Button
         android:id="@+id/btn_capture"
-        android:layout_width="219dp"
-        android:layout_height="85dp"
-        android:layout_marginBottom="51dp"
+        style="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:background="@drawable/menu_button_background"
         android:fontFamily="sans-serif"
+        android:padding="20dp"
         android:text="Capture"
         android:textColor="#fff"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_jobrole" />
+
 </android.support.constraint.ConstraintLayout>

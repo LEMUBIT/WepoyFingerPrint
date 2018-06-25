@@ -14,6 +14,8 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_home_menu.*
 
 
+
+
 class HomeMenu : AppCompatActivity(), HomeMenuView {
     lateinit var homeMenuPresenter: HomeMenuPresenter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +27,7 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
 
         //Initialize Bugsnag to track crash
         Bugsnag.init(this)
+
 
         homeMenuPresenter = HomeMenuPresenter(this, this)
 
