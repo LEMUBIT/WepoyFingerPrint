@@ -29,13 +29,17 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_take_attendance)
 
-        takeAttendancePresenter = TakeAttendancePresenter()
+        setProgressDialog()
 
+        /**RxJava operation gets fingerPrint Data from getFingerPrint() and Maps the result to getUserID which calls
+         * the observer's onNext method and sends the userID with the notification.
+         * **/
         val fingerObserver = Observable.defer {
             Observable.just(Fingerprint.getFingerPrint(application, this))
                     .map { result -> Fingerprint.getUserID(result) }
         }.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
+
 
         lottie_fingerprint.setOnClickListener {
             fingerObserver.subscribe(observer)
@@ -82,11 +86,11 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
-            takeAttendancePresenter.getUserInfo(id, this@TakeAttendance)
+            TakeAttendancePresenter.getUserInfo(id, this@TakeAttendance)
         }
 
         override fun onComplete() {
-            showInfoToast("Completed")
+            TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@TakeAttendance)
         }
 
         override fun onSubscribe(d: Disposable) {
@@ -94,6 +98,8 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
         }
 
         override fun onError(e: Throwable) {
+            //TODO suspected bug root: Crashes when it does not recognise fingerprint, has something to do with error handling
+            TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@TakeAttendance)
             showInfoToast("Error received: " + e.message)
         }
 

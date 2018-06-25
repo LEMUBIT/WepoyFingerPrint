@@ -41,6 +41,7 @@ object Fingerprint {
 
             if (res.error != Bione.RESULT_OK) {
                 FingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_extract_feature))
+                res=null
             }
 
             mScanner.finish()

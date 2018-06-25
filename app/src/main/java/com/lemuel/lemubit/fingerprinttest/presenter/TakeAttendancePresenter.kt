@@ -4,7 +4,9 @@ import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.model.RealmModel
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
 
-class TakeAttendancePresenter {
+object TakeAttendancePresenter {
+    val GOOD = 0
+    val BAD = 1
 
     fun getUserInfo(ID: Int, takeAttendanceView: TakeAttendanceView) {
         val realmModel = RealmModel()
@@ -16,13 +18,10 @@ class TakeAttendancePresenter {
 
         when (state) {
             GOOD -> takeAttendanceView.onPlayNotificationSound(R.raw.good)
+            BAD -> takeAttendanceView.onPlayNotificationSound(R.raw.bad)
         }
 
     }
 
-    companion object {
 
-        val GOOD = 0
-        val BAD=1
-    }
 }
