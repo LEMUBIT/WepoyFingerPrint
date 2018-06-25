@@ -4,6 +4,7 @@ import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmObject;
+import io.realm.RealmResults;
 import io.realm.annotations.PrimaryKey;
 
 public class RealmModel extends RealmObject {
@@ -41,5 +42,15 @@ public class RealmModel extends RealmObject {
         }
 
         return status;
+    }
+
+    public RealmModel getUserInfo(int ID)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmModel> result = realm.where(RealmModel.class)
+                .equalTo("id", ID)
+                .findAll();
+
+        return result.first();
     }
 }

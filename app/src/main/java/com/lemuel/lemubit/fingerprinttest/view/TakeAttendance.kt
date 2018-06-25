@@ -7,6 +7,8 @@ import android.util.Log
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.model.modelInterface.fingerPrintInterface
+import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
+import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,13 +16,15 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_take_attendance.*
 
-class TakeAttendance : AppCompatActivity(), fingerPrintInterface {
+class TakeAttendance : AppCompatActivity(), fingerPrintInterface, TakeAttendanceView {
     private var mProgressDialog: ProgressDialog? = null
-
+    lateinit var takeAttendancePresenter:TakeAttendancePresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_take_attendance)
+
+        takeAttendancePresenter= TakeAttendancePresenter()
 
         val fingerObserver = Observable.defer {
             Observable.just(Fingerprint.getFingerPrint(application, this))
@@ -33,12 +37,16 @@ class TakeAttendance : AppCompatActivity(), fingerPrintInterface {
         }
     }
 
+    override fun onUpdateInfoTextView(info: String?) {
+        txt_currentTime.setText(info)
+    }
+
     override fun showProgressDialog(title: String?, message: String?) {
         // Toast.makeText(this, message, Toast.LENGTH_LONG).show()
         Log.d("Hey!", message)
     }
 
-    override fun dismissProgressDialog() {
+    override fun dismissProgressDialog()  {
         Log.d("HEY!", "Dismiss progressDialog")
     }
 
@@ -52,7 +60,7 @@ class TakeAttendance : AppCompatActivity(), fingerPrintInterface {
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
-            txt_currentTime.setText(id.toString())
+           takeAttendancePresenter.getUserInfo(id,this@TakeAttendance)
         }
 
         override fun onComplete() {
