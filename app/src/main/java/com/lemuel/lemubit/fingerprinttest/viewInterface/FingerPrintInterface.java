@@ -1,6 +1,6 @@
-package com.lemuel.lemubit.fingerprinttest.model.modelInterface;
+package com.lemuel.lemubit.fingerprinttest.viewInterface;
 
-public interface fingerPrintInterface {
+public interface FingerPrintInterface {
 
     void showProgressDialog(String title, String message);
 

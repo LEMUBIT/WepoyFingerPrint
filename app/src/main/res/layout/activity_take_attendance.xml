@@ -8,20 +8,19 @@
     android:padding="10dp"
     tools:context=".view.TakeAttendance">
 
-    <ImageButton
-        android:id="@+id/imageButton_fingerprint"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_fingerprint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="FingerPrint Icon"
-        android:background="#fffdfb"
-        android:src="@drawable/ic_fingerprint_black_64dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="android_fingerprint.json"
+        app:lottie_repeatCount="3" />
     <TextView
         android:id="@+id/txt_currentTime"
         style="@style/Base.TextAppearance.AppCompat.Large"
@@ -33,7 +32,7 @@
         android:text="Time"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageButton_fingerprint" />
+        app:layout_constraintTop_toBottomOf="@+id/lottie_fingerprint" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerv_attendee"

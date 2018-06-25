@@ -9,8 +9,8 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
-import com.lemuel.lemubit.fingerprinttest.model.modelInterface.fingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.presenter.EnrolPresenter
+import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,7 +20,7 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_enrol.*
 
 @SuppressLint("SdCardPath", "HandlerLeak")
-class EnrolActivity : AppCompatActivity(), fingerPrintInterface {
+class EnrolActivity : AppCompatActivity(), FingerPrintInterface {
     private var realm: Realm? = null
     private var mProgressDialog: ProgressDialog? = null
     lateinit var enrolPresenter: EnrolPresenter

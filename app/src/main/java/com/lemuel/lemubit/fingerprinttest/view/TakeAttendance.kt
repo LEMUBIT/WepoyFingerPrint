@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.model.Fingerprint
-import com.lemuel.lemubit.fingerprinttest.model.modelInterface.fingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
+import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -16,7 +16,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_take_attendance.*
 
-class TakeAttendance : AppCompatActivity(), fingerPrintInterface, TakeAttendanceView {
+class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendanceView {
     private var mProgressDialog: ProgressDialog? = null
     lateinit var takeAttendancePresenter:TakeAttendancePresenter
 
@@ -32,7 +32,7 @@ class TakeAttendance : AppCompatActivity(), fingerPrintInterface, TakeAttendance
         }.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
 
-        imageButton_fingerprint.setOnClickListener {
+        lottie_fingerprint.setOnClickListener {
             fingerObserver.subscribe(observer)
         }
     }
