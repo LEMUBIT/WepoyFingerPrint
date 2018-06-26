@@ -27,3 +27,5 @@ jobs:
           destination: reports
       - store_test_results:
           path: app/build/test-results
+          
+echo 'export ANDROID_HOME=/usr/local/share/android-sdk' 
