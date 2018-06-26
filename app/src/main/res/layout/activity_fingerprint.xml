@@ -98,7 +98,7 @@
         app:layout_constraintBottom_toTopOf="@+id/nameTxt"
         app:layout_constraintEnd_toStartOf="@+id/fingerimage"
         app:layout_constraintStart_toStartOf="parent"
-        
+
         tools:layout_editor_absoluteX="0dp" />
 
     <EditText
