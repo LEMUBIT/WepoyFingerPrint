@@ -17,7 +17,7 @@ object TakeAttendancePresenter {
     fun playSound(state: Int, takeAttendanceView: TakeAttendanceView) {
 
         when (state) {
-            GOOD -> takeAttendanceView.onPlayNotificationSound(R.raw.good)
+            GOOD -> takeAttendanceView. onPlayNotificationSound(R.raw.good)
             BAD -> takeAttendanceView.onPlayNotificationSound(R.raw.bad)
         }
 

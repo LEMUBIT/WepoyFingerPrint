@@ -37,6 +37,9 @@
             android:value="e9bb1eb5ac80557313233326eb05908f" />
 
         <activity android:name=".view.TakeAttendance"></activity>
+
+        <meta-data android:name="com.rollbar.android.ACCESS_TOKEN"
+            android:value="ce08be5b409f49c4838dab8b096733f1" />
     </application>
 
 </manifest>

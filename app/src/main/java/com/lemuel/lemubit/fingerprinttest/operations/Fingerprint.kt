@@ -26,6 +26,7 @@ object Fingerprint {
             do res = mScanner.capture()
             while (res!!.error == FingerprintScanner.NO_FINGER)
 
+            mScanner.finish()
 
             if (res.error != FingerprintScanner.RESULT_OK) {
                 FingerPrintInterface.showInfoToast(application.getString(R.string.capture_image_failed))
@@ -44,7 +45,7 @@ object Fingerprint {
                 res=null
             }
 
-            mScanner.finish()
+
         } while (false)
 
         FingerPrintInterface.dismissProgressDialog()
