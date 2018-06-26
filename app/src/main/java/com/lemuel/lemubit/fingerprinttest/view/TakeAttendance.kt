@@ -10,6 +10,7 @@ import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
+import com.rollbar.android.Rollbar
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -86,11 +87,18 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
-            TakeAttendancePresenter.getUserInfo(id, this@TakeAttendance)
+            if(id>=0) {
+                TakeAttendancePresenter.getUserInfo(id, this@TakeAttendance)
+                TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@TakeAttendance)
+                Rollbar.instance().log("ID: ${id}")
+            }
+            else{
+                TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@TakeAttendance)
+            }
         }
 
         override fun onComplete() {
-            TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@TakeAttendance)
+
         }
 
         override fun onSubscribe(d: Disposable) {
