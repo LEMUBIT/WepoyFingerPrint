@@ -10,6 +10,7 @@ import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.presenter.HomeMenuPresenter
 import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity
 import com.lemuel.lemubit.fingerprinttest.viewInterface.HomeMenuView
+import com.rollbar.android.Rollbar
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_home_menu.*
 
@@ -28,7 +29,8 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
         //Initialize Bugsnag to track crash
         Bugsnag.init(this)
 
-
+        Rollbar.init(this)
+        Rollbar.instance().log("Some button was clicked haha");
         homeMenuPresenter = HomeMenuPresenter(this, this)
 
         btn_enrol.setOnClickListener {
