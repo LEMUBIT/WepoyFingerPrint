@@ -1,8 +1,6 @@
 general:
     artifacts:
         - /home/ubuntu/your-app-name/app/build/outputs/apk/
-        
-- sudo ANDROID_HOME=/usr/local/android-sdk-linux ./gradlew dependencies
 
 machine:
     environment:
