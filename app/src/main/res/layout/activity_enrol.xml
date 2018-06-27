@@ -10,15 +10,16 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation_view"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="newUser.json" />
+        app:lottie_loop="true"
+        app:lottie_fileName="fingerprint_lottie.json" />
 
     <View
         android:layout_width="match_parent"
@@ -32,18 +33,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/animation_view" />
+
     <EditText
         android:id="@+id/txt_name"
         style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="32dp"
         android:background="#fff"
         android:ems="10"
         android:fontFamily="sans-serif"
-        android:gravity="center"
+         android:padding="10dp"
         android:hint="Name"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
@@ -56,37 +56,17 @@
         style="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:background="#fff"
         android:ems="10"
         android:fontFamily="sans-serif"
-        android:gravity="center"
+       android:padding="10dp"
         android:hint="SurName"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txt_name" />
-
-    <EditText
-        android:id="@+id/txt_jobrole"
-        style="@style/Base.TextAppearance.AppCompat.Large"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:background="#fff"
-        android:ems="10"
-        android:fontFamily="sans-serif"
-        android:gravity="center"
-        android:hint="Job Role"
-        android:inputType="textPersonName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_surname" />
 
     <Button
         android:id="@+id/btn_capture"
@@ -95,7 +75,7 @@
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="60dp"
         android:background="@drawable/menu_button_background"
         android:fontFamily="sans-serif"
         android:padding="20dp"
@@ -104,6 +84,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_jobrole" />
+        app:layout_constraintTop_toBottomOf="@+id/txt_surname" />
 
 </android.support.constraint.ConstraintLayout>

@@ -5,8 +5,8 @@ import com.lemuel.lemubit.fingerprinttest.model.RealmModel
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
 
 object TakeAttendancePresenter {
-    val GOOD = 0
-    val BAD = 1
+    const val GOOD = 0
+    const val BAD = 1
 
     fun getUserInfo(ID: Int, takeAttendanceView: TakeAttendanceView) {
         val realmModel = RealmModel()
