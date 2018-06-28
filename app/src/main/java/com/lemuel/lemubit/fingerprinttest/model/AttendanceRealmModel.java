@@ -1,6 +1,5 @@
 package com.lemuel.lemubit.fingerprinttest.model;
 
-import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -56,21 +55,4 @@ public class AttendanceRealmModel extends RealmObject {
         this.date = date;
     }
 
-    public String markAttendance(int ID, String name, String lastName, String time, String date) {
-        String status;
-        try {
-            AttendanceRealmModel newAttendanceRecord = new AttendanceRealmModel();
-            newAttendanceRecord.id = ID;
-            newAttendanceRecord.name = name;
-            newAttendanceRecord.lastName = lastName;
-            newAttendanceRecord.time = time;
-            newAttendanceRecord.date = date;
-            Realm realm = Realm.getDefaultInstance();
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(newAttendanceRecord));
-            status = "Attendance recorded ID= " + String.valueOf(ID);
-        } catch (Exception e) {
-            status = "Error: " + e.getMessage();
-        }
-        return status;
-    }
 }
