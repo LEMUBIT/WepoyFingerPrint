@@ -3,6 +3,7 @@ package com.lemuel.lemubit.fingerprinttest.view
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.lemuel.lemubit.fingerprinttest.R
@@ -10,7 +11,6 @@ import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
-import com.rollbar.android.Rollbar
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -18,8 +18,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_take_attendance.*
 
-class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendanceView {
-    lateinit var takeAttendancePresenter: TakeAttendancePresenter
+class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInterface {
     lateinit var mPlayer: MediaPlayer
     var mPlayerInitialized = false
 
@@ -66,8 +65,8 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
 
     override fun setProgressDialog() {
         dialogBuilder = MaterialDialog.Builder(this)
-                .title("hey testing")
-                .content(R.string.enrol)
+                .title("Take your attendance")
+                .content(R.string.press_finger)
                 .progress(true, 0)
                 .progressIndeterminateStyle(true)
         dialog = dialogBuilder.build()
@@ -87,28 +86,26 @@ class TakeAttendance : AppCompatActivity(), FingerPrintInterface, TakeAttendance
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
-            if(id>=0) {
+            if (id >= 0) {
                 TakeAttendancePresenter.getUserInfo(id, this@TakeAttendance)
                 TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@TakeAttendance)
-                Rollbar.instance().log("ID: ${id}")
-            }
-            else{
+                //Rollbar.instance().log("ID: ${id}")
+            } else {
                 TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@TakeAttendance)
             }
         }
 
         override fun onComplete() {
-
+            Log.d("RxJAVA:", "completed")
         }
 
         override fun onSubscribe(d: Disposable) {
-            showInfoToast("subscribed")
+            Log.d("RxJAVA:", "subscribed")
         }
 
         override fun onError(e: Throwable) {
-            //TODO suspected bug root: Crashes when it does not recognise fingerprint, has something to do with error handling
             TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@TakeAttendance)
-            showInfoToast("Error received: " + e.message)
+            Log.d("RxJAVA:", e.message)
         }
 
     }

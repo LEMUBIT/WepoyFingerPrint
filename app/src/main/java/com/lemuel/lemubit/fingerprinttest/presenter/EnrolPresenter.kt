@@ -1,21 +1,26 @@
 package com.lemuel.lemubit.fingerprinttest.presenter
 
-import android.content.Context
+import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.model.RealmModel
-import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
+import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolActivityView
 
-class EnrolPresenter(FingerPrintInterface: FingerPrintInterface) {
+object EnrolPresenter {
+    const val GOOD = 0
+    const val BAD = 1
 
-    var realmModel = RealmModel()
-
-    init {
-        FingerPrintInterface.setProgressDialog()
-    }
-
-    fun registerNewUserInLocalDB(context: Context, ID: Int, name: String): String {
-        return realmModel.registerNewUser(context, ID, name)
+    fun registerNewUserInLocalDB(ID: Int, name: String, lastName: String): String {
+        val realmModel = RealmModel()
+        return realmModel.registerNewUser(ID, name, lastName )
     }
 
 
+    fun playSound(state: Int, enrolActivityView: EnrolActivityView) {
+
+        when (state) {
+            GOOD -> enrolActivityView. onPlayNotificationSound(R.raw.great)
+            BAD -> enrolActivityView.onPlayNotificationSound(R.raw.bad)
+        }
+
+    }
 
 }

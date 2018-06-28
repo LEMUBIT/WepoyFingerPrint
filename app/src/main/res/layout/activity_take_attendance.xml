@@ -19,8 +19,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:lottie_autoPlay="true"
+        app:lottie_loop="true"
         app:lottie_fileName="android_fingerprint.json"
-        app:lottie_repeatCount="3" />
+         />
     <TextView
         android:id="@+id/txt_currentTime"
         style="@style/Base.TextAppearance.AppCompat.Large"

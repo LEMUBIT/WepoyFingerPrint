@@ -141,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bugsnag.init(this);
         // Get a Realm instance for this thread
         realm = Realm.getDefaultInstance();
+
     }
 
     @Override

@@ -30,7 +30,6 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
         Bugsnag.init(this)
 
         Rollbar.init(this)
-        Rollbar.instance().log("Some button was clicked haha");
         homeMenuPresenter = HomeMenuPresenter(this, this)
 
         btn_enrol.setOnClickListener {

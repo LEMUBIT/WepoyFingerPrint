@@ -1,7 +1,5 @@
 package com.lemuel.lemubit.fingerprinttest.model;
 
-import android.content.Context;
-
 import io.realm.Realm;
 import io.realm.RealmObject;
 import io.realm.RealmResults;
@@ -11,6 +9,7 @@ public class RealmModel extends RealmObject {
     @PrimaryKey
     private int id;
     private String name;
+    private String lastName;
 
     public int getId() {
         return id;
@@ -28,12 +27,21 @@ public class RealmModel extends RealmObject {
         this.name = name;
     }
 
-    public String registerNewUser(Context context, int ID, String name) {
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String registerNewUser(int ID, String name, String lastName) {
         String status;
         try {
             RealmModel user = new RealmModel();
             user.setId(ID);
             user.setName(name);
+            user.setLastName(lastName);
             Realm realm = Realm.getDefaultInstance();
             realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(user));
             status = "User saved ID= " + String.valueOf(ID);
