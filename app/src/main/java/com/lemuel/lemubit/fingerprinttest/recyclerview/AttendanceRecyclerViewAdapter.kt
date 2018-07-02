@@ -5,14 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.model.AttendanceRealmModel
-
-import io.realm.OrderedRealmCollection
 import io.realm.RealmRecyclerViewAdapter
+import io.realm.RealmResults
 
-class AttendanceRecyclerViewAdapter internal constructor(data: OrderedRealmCollection<AttendanceRealmModel>) : RealmRecyclerViewAdapter<AttendanceRealmModel, AttendanceRecyclerViewAdapter.MyViewHolder>(data, true) {
+class AttendanceRecyclerViewAdapter internal constructor(data: RealmResults<AttendanceRealmModel>) : RealmRecyclerViewAdapter<AttendanceRealmModel, AttendanceRecyclerViewAdapter.MyViewHolder>(data, true) {
 
     init {
         // Only set this if the model class has a primary key that is also a integer or long.

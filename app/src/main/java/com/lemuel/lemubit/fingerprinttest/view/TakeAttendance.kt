@@ -11,13 +11,13 @@ import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.helper.DateAndTime
-import com.lemuel.lemubit.fingerprinttest.model.AttendanceParent
 import com.lemuel.lemubit.fingerprinttest.model.DataHelper
 import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
 import com.lemuel.lemubit.fingerprinttest.recyclerview.AttendanceRecyclerViewAdapter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
+import com.rollbar.android.Rollbar
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,7 +31,7 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
     lateinit var mPlayer: MediaPlayer
     var mPlayerInitialized = false
     private var recyclerView: RecyclerView? = null
-    private var adapter: AttendanceRecyclerViewAdapter? = null
+    private  var adapter: AttendanceRecyclerViewAdapter?=null
     lateinit var dialogBuilder: MaterialDialog.Builder
     lateinit var dialog: MaterialDialog
     private var realm: Realm? = null
@@ -57,11 +57,12 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
         }
 
         recyclerView = findViewById(R.id.recyclerv_attendee)
-        setUpRecyclerView()
+     setUpRecyclerView()
+     //Toast.makeText(this,   DataHelper.getData(),Toast.LENGTH_LONG).show()
     }
 
     private fun setUpRecyclerView() {
-        adapter = AttendanceRecyclerViewAdapter(realm?.where(AttendanceParent::class.java)?.findFirst()?.attendanceRealmModelRealmList!!)
+        adapter = AttendanceRecyclerViewAdapter(DataHelper.getTodayAttendance())
         recyclerView?.layoutManager = LinearLayoutManager(this)
         recyclerView?.adapter = adapter
         recyclerView?.setHasFixedSize(true)
@@ -87,6 +88,8 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
 
     override fun onInfoGotten(ID: Int, name: String, lastName: String) {
         DataHelper.markAttendance(ID,name,lastName,DateAndTime.getCurrentTime(),DateAndTime.getCurrentDate())
+        Rollbar.instance().log("Info Gotten:"+ID.toString())
+
         adapter?.notifyDataSetChanged()
     }
 
