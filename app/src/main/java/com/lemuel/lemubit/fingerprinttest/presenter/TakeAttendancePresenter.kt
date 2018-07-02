@@ -10,7 +10,7 @@ object TakeAttendancePresenter {
 
     fun getUserInfo(ID: Int, takeAttendanceView: TakeAttendanceView) {
         val realmModel = RealmModel()
-
+realmModel.getUserInfo(ID).
         takeAttendanceView.onUpdateInfoTextView(realmModel.getUserInfo(ID).name)
     }
 
