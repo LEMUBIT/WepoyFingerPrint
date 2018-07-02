@@ -1,7 +1,7 @@
 package com.lemuel.lemubit.fingerprinttest.presenter
 
 import com.lemuel.lemubit.fingerprinttest.R
-import com.lemuel.lemubit.fingerprinttest.model.RealmModel
+import com.lemuel.lemubit.fingerprinttest.model.DataHelper
 import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolActivityView
 
 object EnrolPresenter {
@@ -9,8 +9,7 @@ object EnrolPresenter {
     const val BAD = 1
 
     fun registerNewUserInLocalDB(ID: Int, name: String, lastName: String): String {
-        val realmModel = RealmModel()
-        return realmModel.registerNewUser(ID, name, lastName )
+        return DataHelper.registerNewUser(ID, name, lastName )
     }
 
 

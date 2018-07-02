@@ -67,7 +67,7 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
             KeyEvent.KEYCODE_BACK -> {
                 return false
             }
-        //todo See if it's feasible to stop user from using other Keys to close Activity
+        //todo Check how to stop home button from closing app
         }
         return super.onKeyDown(keyCode, event)
     }

@@ -10,14 +10,14 @@ object TakeAttendancePresenter {
 
     fun getUserInfo(ID: Int, takeAttendanceView: TakeAttendanceView) {
         val realmModel = RealmModel()
-
         takeAttendanceView.onUpdateInfoTextView(realmModel.getUserInfo(ID).name)
+        takeAttendanceView.onInfoGotten(ID, realmModel.getUserInfo(ID).name, realmModel.getUserInfo(ID).lastName)
     }
 
     fun playSound(state: Int, takeAttendanceView: TakeAttendanceView) {
 
         when (state) {
-            GOOD -> takeAttendanceView. onPlayNotificationSound(R.raw.great)
+            GOOD -> takeAttendanceView.onPlayNotificationSound(R.raw.great)
             BAD -> takeAttendanceView.onPlayNotificationSound(R.raw.bad)
         }
 
