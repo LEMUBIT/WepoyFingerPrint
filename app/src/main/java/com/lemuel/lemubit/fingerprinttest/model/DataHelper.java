@@ -7,6 +7,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class DataHelper {
+
     public static String markAttendance(int ID, String name, String lastName, String time, String date) throws Exception {
         Rollbar.instance().log("mark attendance start");
         String status;

@@ -36,7 +36,7 @@ dependencies {
 
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 
-    implementation  'io.realm:android-adapters:2.1.1'
+    implementation 'io.realm:android-adapters:2.1.1'
 
     implementation('com.rollbar:rollbar-java:1.0.0')
     implementation('com.rollbar:rollbar-android:1.2.0@aar')

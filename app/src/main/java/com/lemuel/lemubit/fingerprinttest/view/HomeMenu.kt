@@ -15,8 +15,6 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_home_menu.*
 
 
-
-
 class HomeMenu : AppCompatActivity(), HomeMenuView {
     lateinit var homeMenuPresenter: HomeMenuPresenter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +42,9 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
             homeMenuPresenter.clearDatabase()
         }
 
+        btn_viewAttendance.setOnClickListener {
+            startActivity(Intent(this, ViewAttendance::class.java))
+        }
         //!todo :Used to test, delete it!... Use same image to get fingerPrint in TakeAttendance
         animation_view.setOnClickListener {
             Toast.makeText(this, "Ive been Clicked", Toast.LENGTH_LONG).show()
