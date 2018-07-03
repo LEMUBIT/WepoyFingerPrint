@@ -62,7 +62,7 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
     }
 
     private fun setUpRecyclerView() {
-        adapter = AttendanceRecyclerViewAdapter(DataHelper.getTodayAttendance())
+        adapter = AttendanceRecyclerViewAdapter(DataHelper.getTodayAttendance(), this)
         recyclerView?.layoutManager = LinearLayoutManager(this)
         recyclerView?.adapter = adapter
         recyclerView?.setHasFixedSize(true)
@@ -139,5 +139,7 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
         }
 
     }
+
+
 
 }
