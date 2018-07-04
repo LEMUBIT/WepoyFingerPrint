@@ -8,7 +8,6 @@ import android.widget.Toast
 import com.bugsnag.android.Bugsnag
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.presenter.HomeMenuPresenter
-import com.lemuel.lemubit.fingerprinttest.view.EnrolActivity
 import com.lemuel.lemubit.fingerprinttest.viewInterface.HomeMenuView
 import com.rollbar.android.Rollbar
 import io.realm.Realm
@@ -35,7 +34,7 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
         }
 
         btn_takeAttendance.setOnClickListener {
-            startActivity(Intent(this, TakeAttendance::class.java))
+            startActivity(Intent(this, CaptureAttendance::class.java))
         }
 
         btn_clearAttendance.setOnClickListener {
@@ -45,7 +44,7 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
         btn_viewAttendance.setOnClickListener {
             startActivity(Intent(this, ViewAttendance::class.java))
         }
-        //!todo :Used to test, delete it!... Use same image to get fingerPrint in TakeAttendance
+        //!todo :Used to test, delete it!... Use same image to get fingerPrint in CaptureAttendance
         animation_view.setOnClickListener {
             Toast.makeText(this, "Ive been Clicked", Toast.LENGTH_LONG).show()
         }

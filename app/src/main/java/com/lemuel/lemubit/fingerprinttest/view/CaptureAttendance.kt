@@ -14,7 +14,7 @@ import com.lemuel.lemubit.fingerprinttest.helper.DateAndTime
 import com.lemuel.lemubit.fingerprinttest.model.DataHelper
 import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
-import com.lemuel.lemubit.fingerprinttest.recyclerview.AttendanceRecyclerViewAdapter
+import com.lemuel.lemubit.fingerprinttest.recyclerview.CaptureAttendanceAdapter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
 import com.rollbar.android.Rollbar
@@ -24,22 +24,23 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_take_attendance.*
+import kotlinx.android.synthetic.main.activity_capture_attendance.*
 
 
-class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInterface {
+class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInterface {
     lateinit var mPlayer: MediaPlayer
     var mPlayerInitialized = false
     private var recyclerView: RecyclerView? = null
-    private  var adapter: AttendanceRecyclerViewAdapter?=null
+    private var adapter: CaptureAttendanceAdapter? = null
     lateinit var dialogBuilder: MaterialDialog.Builder
     lateinit var dialog: MaterialDialog
     private var realm: Realm? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_take_attendance)
+        setContentView(R.layout.activity_capture_attendance)
         realm = Realm.getDefaultInstance()
+        recyclerView = findViewById(R.id.recyclerv_attendee)
         setProgressDialog()
 
         /**RxJava operation gets fingerPrint Data from getFingerPrint() and Maps the result to getUserID which calls
@@ -56,13 +57,12 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
             fingerObserver.subscribe(observer)
         }
 
-        recyclerView = findViewById(R.id.recyclerv_attendee)
-     setUpRecyclerView()
-     //Toast.makeText(this,   DataHelper.getData(),Toast.LENGTH_LONG).show()
+
+        setUpRecyclerView()
     }
 
     private fun setUpRecyclerView() {
-        adapter = AttendanceRecyclerViewAdapter(DataHelper.getTodayAttendance(), this)
+        adapter = CaptureAttendanceAdapter(DataHelper.getTodayAttendance(), this)
         recyclerView?.layoutManager = LinearLayoutManager(this)
         recyclerView?.adapter = adapter
         recyclerView?.setHasFixedSize(true)
@@ -81,14 +81,14 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
     }
 
     override fun onPlayNotificationSound(res: Int) {
-        mPlayer = MediaPlayer.create(this@TakeAttendance, res)
+        mPlayer = MediaPlayer.create(this@CaptureAttendance, res)
         mPlayer.start()
         mPlayerInitialized = true
     }
 
     override fun onInfoGotten(ID: Int, name: String, lastName: String) {
-        DataHelper.markAttendance(ID,name,lastName,DateAndTime.getCurrentTime(),DateAndTime.getCurrentDate())
-        Rollbar.instance().log("Info Gotten:"+ID.toString())
+        DataHelper.markAttendance(ID, name, lastName, DateAndTime.getCurrentTime(), DateAndTime.getCurrentDate())
+        Rollbar.instance().log("Info Gotten:" + ID.toString())
 
         adapter?.notifyDataSetChanged()
     }
@@ -111,17 +111,16 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
     }
 
     override fun showInfoToast(info: String?) {
-        this.runOnUiThread { Toast.makeText(this@TakeAttendance, info, Toast.LENGTH_SHORT).show() }
+        this.runOnUiThread { Toast.makeText(this@CaptureAttendance, info, Toast.LENGTH_SHORT).show() }
     }
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
             if (id >= 0) {
-                TakeAttendancePresenter.getUserInfo(id, this@TakeAttendance)
-                TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@TakeAttendance)
-                //Rollbar.instance().log("ID: ${id}")
+                TakeAttendancePresenter.getUserInfo(id, this@CaptureAttendance)
+                TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@CaptureAttendance)
             } else {
-                TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@TakeAttendance)
+                TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@CaptureAttendance)
             }
         }
 
@@ -134,12 +133,11 @@ class TakeAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintInter
         }
 
         override fun onError(e: Throwable) {
-            TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@TakeAttendance)
+            TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@CaptureAttendance)
             Log.d("RxJAVA:", e.message)
         }
 
     }
-
 
 
 }
