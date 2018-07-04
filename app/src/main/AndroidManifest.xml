@@ -36,7 +36,7 @@
             android:name="com.bugsnag.android.API_KEY"
             android:value="e9bb1eb5ac80557313233326eb05908f" />
 
-        <activity android:name=".view.TakeAttendance" />
+        <activity android:name=".view.CaptureAttendance" />
 
         <meta-data
             android:name="com.rollbar.android.ACCESS_TOKEN"

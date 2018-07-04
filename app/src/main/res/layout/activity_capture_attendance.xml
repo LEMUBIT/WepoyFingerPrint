@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:padding="10dp"
-    tools:context=".view.TakeAttendance">
+    tools:context=".view.CaptureAttendance">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_fingerprint"
