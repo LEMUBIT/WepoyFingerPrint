@@ -10,6 +10,8 @@ import android.util.Log
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.lemuel.lemubit.fingerprinttest.R
+import com.lemuel.lemubit.fingerprinttest.helper.CaptureAttendanceState
+import com.lemuel.lemubit.fingerprinttest.helper.CaptureAttendanceState.attendees
 import com.lemuel.lemubit.fingerprinttest.helper.DateAndTime
 import com.lemuel.lemubit.fingerprinttest.model.DataHelper
 import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
@@ -45,7 +47,7 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
 
         /**RxJava operation gets fingerPrint Data from getFingerPrint() and Maps the result to getUserID which calls
          * the observer's onNext method and sends the userID with the notification.
-         * **/
+         */
         val fingerObserver = Observable.defer {
             Observable.just(Fingerprint.getFingerPrint(application, this))
                     .map { result -> Fingerprint.getUserID(result) }
@@ -116,10 +118,14 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
-            if (id >= 0) {
+            if (id >= 0 && !CaptureAttendanceState.alreadyCaptured(id)) {
                 TakeAttendancePresenter.getUserInfo(id, this@CaptureAttendance)
                 TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@CaptureAttendance)
+                attendees.add(id)
             } else {
+                if (CaptureAttendanceState.alreadyCaptured(id))
+                    showInfoToast("You're already captured for Today")
+
                 TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@CaptureAttendance)
             }
         }

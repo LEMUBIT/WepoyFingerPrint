@@ -22,7 +22,9 @@ class ViewAttendance : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         val format1 = SimpleDateFormat("dd/MM/yyyy", Locale.UK)
 
         val formatted = format1.format(cal.time)
-
+        adapter = ViewAttendanceAdapter(DataHelper.getAttendanceRecord(formatted), this)
+        recyclerView?.adapter = adapter
+        adapter!!.newRecord()
         Toast.makeText(this@ViewAttendance, formatted, Toast.LENGTH_SHORT).show()
     }
 
@@ -34,14 +36,21 @@ class ViewAttendance : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         setContentView(R.layout.activity_view_attendance)
         recyclerView = findViewById(R.id.recyclerv_record)
 
-       setUpRecyclerView()
+        setUpRecyclerView()
 
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
         val day = c.get(Calendar.DAY_OF_MONTH)
-        DatePickerDialog(this@ViewAttendance, this, year, month,day).show()
-        btn_filter.setOnClickListener {  }
+
+        btn_filter.setOnClickListener { DatePickerDialog(this@ViewAttendance, this, year, month, day).show() }
+
+        txt_filterdate.setOnClickListener {
+            adapter = ViewAttendanceAdapter(DataHelper.getAttendanceRecord(), this)
+            recyclerView?.adapter = adapter
+            adapter!!.newRecord()
+        }
+
     }
 
     private fun setUpRecyclerView() {
@@ -51,6 +60,6 @@ class ViewAttendance : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
         recyclerView?.setHasFixedSize(true)
         recyclerView?.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
     }
-    
+
 
 }
