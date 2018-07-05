@@ -17,7 +17,7 @@ public class DataHelper {
             newAttendanceRecord.setTime(time);
             newAttendanceRecord.setDate(date);
             Realm realm = Realm.getDefaultInstance();
-            realm.executeTransaction(realm1 -> realm.copyToRealmOrUpdate(newAttendanceRecord));
+            realm.executeTransaction(realm1 -> realm.insert(newAttendanceRecord));
             status = "Attendance recorded ID= " + String.valueOf(ID);
         } catch (Exception e) {
             status = "Error: " + e.getMessage();

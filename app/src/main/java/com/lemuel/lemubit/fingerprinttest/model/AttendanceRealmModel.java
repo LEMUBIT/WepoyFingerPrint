@@ -1,10 +1,8 @@
 package com.lemuel.lemubit.fingerprinttest.model;
 
 import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
 
 public class AttendanceRealmModel extends RealmObject {
-    @PrimaryKey
     private int id;
 
     private String name;
