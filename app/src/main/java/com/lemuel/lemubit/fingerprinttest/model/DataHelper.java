@@ -62,4 +62,13 @@ public class DataHelper {
         return realm.where(AttendanceRealmModel.class).sort("time").findAll();
     }
 
+    public static RealmModel getUserInfo(int ID)
+    {
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<RealmModel> result = realm.where(RealmModel.class)
+                .equalTo("id", ID)
+                .findAll();
+
+        return result.first();
+    }
 }

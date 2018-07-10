@@ -35,13 +35,4 @@ public class RealmModel extends RealmObject {
         this.lastName = lastName;
     }
 
-    public RealmModel getUserInfo(int ID)
-    {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<RealmModel> result = realm.where(RealmModel.class)
-                .equalTo("id", ID)
-                .findAll();
-
-        return result.first();
-    }
 }
