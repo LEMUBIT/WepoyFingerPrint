@@ -12,11 +12,10 @@ object EnrolPresenter {
         return DataHelper.registerNewUser(ID, name, lastName )
     }
 
-
     fun playSound(state: Int, enrolActivityView: EnrolActivityView) {
 
         when (state) {
-            GOOD -> enrolActivityView. onPlayNotificationSound(R.raw.great)
+            GOOD -> enrolActivityView.onPlayNotificationSound(R.raw.great)
             BAD -> enrolActivityView.onPlayNotificationSound(R.raw.bad)
         }
 
