@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mProgressDialog.setIcon(android.R.drawable.ic_dialog_info);
         mProgressDialog.setIndeterminate(false);
         mProgressDialog.setCancelable(false);
-
+        mBtnClear.setVisibility(View.VISIBLE);
         updateSingerTestText(-1, -1, -1, -1);
         // Initialize Realm (just once per application)
         Realm.init(getApplicationContext());

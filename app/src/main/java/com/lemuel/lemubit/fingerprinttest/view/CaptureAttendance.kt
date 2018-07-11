@@ -20,6 +20,7 @@ import com.lemuel.lemubit.fingerprinttest.recyclerview.CaptureAttendanceAdapter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
 import com.rollbar.android.Rollbar
+import com.wepoy.fp.FingerprintImage
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -80,6 +81,10 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
 
     override fun onUpdateInfoTextView(info: String?) {
         txt_currentTime.text = info
+    }
+
+    override fun updateFingerPrintImage(fi: FingerprintImage?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onPlayNotificationSound(res: Int) {

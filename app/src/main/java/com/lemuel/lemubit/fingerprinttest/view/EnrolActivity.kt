@@ -1,6 +1,7 @@
 package com.lemuel.lemubit.fingerprinttest.view
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,6 +13,8 @@ import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.EnrolPresenter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.EnrolActivityView
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
+import com.mapzen.speakerbox.Speakerbox
+import com.wepoy.fp.FingerprintImage
 import io.reactivex.Observable
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,13 +31,15 @@ class EnrolActivity : AppCompatActivity(), EnrolActivityView, FingerPrintInterfa
     lateinit var dialog: MaterialDialog
     lateinit var mPlayer: MediaPlayer
     var mPlayerInitialized = false
-
+    var rightFingerIDMap = HashMap<Int, Int>()
+    lateinit var speakerbox: Speakerbox
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_enrol)
 
         setProgressDialog()
-
+        speakerbox = Speakerbox(application)
+        speakerbox.enableVolumeControl(this)
         realm = Realm.getDefaultInstance()
 
         //?using just one fingerprint for now
@@ -44,7 +49,7 @@ class EnrolActivity : AppCompatActivity(), EnrolActivityView, FingerPrintInterfa
         }.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
 
-        btn_capture.setOnClickListener { fingerObserver.subscribe(observer) }
+        btn_capture.setOnClickListener { startActivityForResult(Intent(this, CaptureFingers::class.java),1) }
 
     }
 
@@ -53,6 +58,19 @@ class EnrolActivity : AppCompatActivity(), EnrolActivityView, FingerPrintInterfa
         if (mPlayerInitialized) {
             mPlayer.release()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        //todo check out data intent
+        super.onActivityResult(requestCode, resultCode, data)
+        speakerbox.play("Finger information gotten")
+        val bundle = this.intent.extras
+        if(bundle != null) {
+            rightFingerIDMap = bundle.getSerializable("FingerIDHashMap") as HashMap<Int, Int>;
+        }
+        //todo continue form here... size was zero check out data instead
+
+        speakerbox.play("Size is ${rightFingerIDMap.size}")
     }
 
     override fun setProgressDialog() {
@@ -69,6 +87,10 @@ class EnrolActivity : AppCompatActivity(), EnrolActivityView, FingerPrintInterfa
         mPlayer = MediaPlayer.create(this@EnrolActivity, res)
         mPlayer.start()
         mPlayerInitialized = true
+    }
+
+    override fun updateFingerPrintImage(fi: FingerprintImage?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun showProgressDialog(title: String, message: String) {
