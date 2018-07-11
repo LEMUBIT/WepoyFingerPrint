@@ -13,13 +13,13 @@ import com.wepoy.util.Result
 object Fingerprint {
 
     /**@Returns the raw result of fingerprint scan**/
-    fun getFingerPrint(application: Application, FingerPrintInterface: FingerPrintInterface): Result? {
+    fun getFingerPrint(application: Application, fingerPrintInterface: FingerPrintInterface): Result? {
         val mScanner: FingerprintScanner = FingerprintScanner.getInstance(application.applicationContext)
         var fi: FingerprintImage
         var res: Result?
 
         do {
-            FingerPrintInterface.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.press_finger))
+            fingerPrintInterface.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.press_finger))
 
             mScanner.prepare()
 
@@ -29,26 +29,27 @@ object Fingerprint {
             mScanner.finish()
 
             if (res.error != FingerprintScanner.RESULT_OK) {
-                FingerPrintInterface.showInfoToast(application.getString(R.string.capture_image_failed))
+                fingerPrintInterface.showInfoToast(application.getString(R.string.capture_image_failed))
             }
 
             fi = res.data as FingerprintImage
 
-            FingerPrintInterface.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.enrolling))
+            fingerPrintInterface.showProgressDialog(application.getString(R.string.loading), application.getString(R.string.enrolling))
 
             Bugsnag.leaveBreadcrumb(application.getString(R.string.enrolling))
 
             res = Bione.extractFeature(fi)
 
             if (res.error != Bione.RESULT_OK) {
-                FingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_extract_feature))
-                res=null
+                fingerPrintInterface.showInfoToast(application.getString(R.string.enroll_failed_because_of_extract_feature))
+                res = null
             }
 
-
+            //TODO continue from here
+            fingerPrintInterface.updateFingerPrintImage(fi)
         } while (false)
 
-        FingerPrintInterface.dismissProgressDialog()
+        fingerPrintInterface.dismissProgressDialog()
 
         return res
     }

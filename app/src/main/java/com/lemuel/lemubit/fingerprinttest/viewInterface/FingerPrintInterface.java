@@ -1,5 +1,7 @@
 package com.lemuel.lemubit.fingerprinttest.viewInterface;
 
+import com.wepoy.fp.FingerprintImage;
+
 public interface FingerPrintInterface {
 
     void showProgressDialog(String title, String message);
@@ -9,4 +11,6 @@ public interface FingerPrintInterface {
     void setProgressDialog();
 
     void showInfoToast(String info);
+
+    void updateFingerPrintImage(FingerprintImage fi);
 }
