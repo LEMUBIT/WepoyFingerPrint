@@ -43,13 +43,13 @@
             android:value="ce08be5b409f49c4838dab8b096733f1" />
 
         <activity android:name=".view.ViewAttendance" />
-        <activity android:name=".view.CaptureFingers">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+        <activity android:name=".view.CaptureRightFingers">
         </activity>
+
+        <activity android:name=".view.CaptureLeftFingers">
+        </activity>
+
     </application>
 
 </manifest>

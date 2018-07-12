@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_fingerprint_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/image/ic_camera_alt_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -29,11 +29,11 @@
                         <option name="values">
                           <map>
                             <entry key="autoMirrored" value="true" />
-                            <entry key="height" value="64" />
-                            <entry key="outputName" value="ic_fingerprint_black_64dp" />
+                            <entry key="height" value="300" />
+                            <entry key="outputName" value="ic_camera_alt_black_300dp" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\Novateur Workforce\AndroidStudioProjects\FingerPrintTest\app\src\main\res\drawable\baseline-fingerprint-24px.svg" />
-                            <entry key="width" value="64" />
+                            <entry key="width" value="300" />
                           </map>
                         </option>
                       </PersistentState>

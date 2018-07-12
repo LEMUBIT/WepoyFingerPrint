@@ -8,8 +8,22 @@ object EnrolPresenter {
     const val GOOD = 0
     const val BAD = 1
 
-    fun registerNewUserInLocalDB(ID: Int, name: String, lastName: String): String {
-        return DataHelper.registerNewUser(ID, name, lastName )
+    fun registerNewUserInLocalDB(
+            ID: Int,
+            name: String,
+            lastName: String,
+            leftThumb: Int,
+            leftIndex: Int,
+            leftMiddle: Int,
+            leftRing: Int,
+            leftPinky: Int,
+            rightThumb: Int,
+            rightIndex: Int,
+            rightMiddle: Int,
+            rightRing: Int,
+            rightPinky: Int
+    ): String {
+        return DataHelper.registerNewUser(ID, name, lastName, leftThumb, leftIndex, leftMiddle, leftRing, leftPinky, rightThumb, rightIndex, rightMiddle, rightRing, rightPinky)
     }
 
     fun playSound(state: Int, enrolActivityView: EnrolActivityView) {
