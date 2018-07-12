@@ -27,7 +27,8 @@ public class DataHelper {
 
     }
 
-    public static String registerNewUser(int ID, String name, String lastName) {
+    //todo register new information
+    public static String registerNewUser(int ID, String name, String lastName, int leftThumb, int leftIndex, int leftMiddle, int leftRing, int leftPinky, int rightThumb, int rightIndex, int rightMiddle, int rightRing, int rightPinky) {
         String status;
         try {
             RealmModel user = new RealmModel();
@@ -46,24 +47,21 @@ public class DataHelper {
 
     public static RealmResults<AttendanceRealmModel> getTodayAttendance() {
         Realm realm = Realm.getDefaultInstance();
-        String currentDate= DateAndTime.getCurrentDate();
-        return realm.where(AttendanceRealmModel.class).equalTo("date",currentDate).sort("time").findAll();
+        String currentDate = DateAndTime.getCurrentDate();
+        return realm.where(AttendanceRealmModel.class).equalTo("date", currentDate).sort("time").findAll();
     }
 
-    public static RealmResults<AttendanceRealmModel> getAttendanceRecord(String date)
-    {
+    public static RealmResults<AttendanceRealmModel> getAttendanceRecord(String date) {
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(AttendanceRealmModel.class).equalTo("date",date).sort("time").findAll();
+        return realm.where(AttendanceRealmModel.class).equalTo("date", date).sort("time").findAll();
     }
 
-    public static RealmResults<AttendanceRealmModel> getAttendanceRecord()
-    {
+    public static RealmResults<AttendanceRealmModel> getAttendanceRecord() {
         Realm realm = Realm.getDefaultInstance();
         return realm.where(AttendanceRealmModel.class).sort("time").findAll();
     }
 
-    public static RealmModel getUserInfo(int ID)
-    {
+    public static RealmModel getUserInfo(int ID) {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<RealmModel> result = realm.where(RealmModel.class)
                 .equalTo("id", ID)

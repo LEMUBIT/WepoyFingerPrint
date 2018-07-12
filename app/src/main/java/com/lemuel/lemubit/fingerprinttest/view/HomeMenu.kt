@@ -34,7 +34,7 @@ class HomeMenu : AppCompatActivity(), HomeMenuView {
         }
 
         btn_takeAttendance.setOnClickListener {
-            startActivity(Intent(this, EnrolActivity::class.java))
+            startActivity(Intent(this, CaptureAttendance::class.java))
         }
 
         btn_clearAttendance.setOnClickListener {
