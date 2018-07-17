@@ -1,16 +1,21 @@
 package com.lemuel.lemubit.fingerprinttest.recyclerview
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.helper.DateAndTime
 import com.lemuel.lemubit.fingerprinttest.model.AttendanceRealmModel
+import com.lemuel.lemubit.fingerprinttest.model.DataHelper
 import io.realm.RealmRecyclerViewAdapter
 import io.realm.RealmResults
+
+
 
 class CaptureAttendanceAdapter internal constructor(data: RealmResults<AttendanceRealmModel>, val context: Context) : RealmRecyclerViewAdapter<AttendanceRealmModel, CaptureAttendanceAdapter.MyViewHolder>(data, true) {
 
@@ -38,6 +43,9 @@ class CaptureAttendanceAdapter internal constructor(data: RealmResults<Attendanc
         if (DateAndTime.isPassedDeadline(attendanceRecord.time))
             holder.signInTime.setTextColor(context.resources.getColor(R.color.afterTime))
         holder.signInTime.text = attendanceRecord.time
+        val photoByteArray:ByteArray=DataHelper.getUserInfo(attendanceRecord.id).photo
+        val bitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+        holder.userPhoto.setImageBitmap(bitmap)
 
     }
 
@@ -49,10 +57,12 @@ class CaptureAttendanceAdapter internal constructor(data: RealmResults<Attendanc
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         var employeeName: TextView
         var signInTime: TextView
+        var userPhoto:ImageView
 
         init {
             employeeName = view.findViewById(R.id.txt_name)
             signInTime = view.findViewById(R.id.txt_time)
+            userPhoto=view.findViewById(R.id.img_CapturedUserPhoto)
         }
     }
 }
