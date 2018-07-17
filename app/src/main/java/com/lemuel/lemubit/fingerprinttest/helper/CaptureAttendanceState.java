@@ -1,13 +1,27 @@
 package com.lemuel.lemubit.fingerprinttest.helper;
 
+import com.lemuel.lemubit.fingerprinttest.model.DataHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class CaptureAttendanceState {
-    public static List<Integer> attendees=new ArrayList<>();
+    private static List<Integer> attendees=new ArrayList<>();
 
-    public static Boolean alreadyCaptured(int ID)
+    public Boolean alreadyCaptured(int ID)
     {
-        return attendees.contains(ID);
+        return attendees.contains(getID(ID));
     }
+
+    public void newAttendee(int fingerPrintID)
+    {
+        attendees.add(getID(fingerPrintID));
+    }
+
+    private int getID(int fingerPrintID)
+    {
+       return DataHelper.getUserInfo(fingerPrintID).getId();
+    }
+
+
 }

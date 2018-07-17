@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.lemuel.lemubit.fingerprinttest">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -44,10 +45,10 @@
 
         <activity android:name=".view.ViewAttendance" />
 
-        <activity android:name=".view.CaptureRightFingers">
+        <activity android:name=".view.EnrolRightFingers">
         </activity>
 
-        <activity android:name=".view.CaptureLeftFingers">
+        <activity android:name=".view.EnrolLeftFingers">
         </activity>
 
     </application>

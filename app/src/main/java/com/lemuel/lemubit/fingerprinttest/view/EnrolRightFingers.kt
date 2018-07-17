@@ -21,7 +21,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_capture_right_fingers.*
 
 
-class CaptureRightFingers : AppCompatActivity(), FingerPrintInterface {
+class EnrolRightFingers : AppCompatActivity(), FingerPrintInterface {
 
     var fingerIDMap = HashMap<Int, Int>()
     var fingerCount = 1
@@ -100,7 +100,7 @@ class CaptureRightFingers : AppCompatActivity(), FingerPrintInterface {
     }
 
     override fun showInfoToast(info: String?) {
-        // this.runOnUiThread { Toast.makeText(this@CaptureRightFingers, info, Toast.LENGTH_SHORT).show() }
+        // this.runOnUiThread { Toast.makeText(this@EnrolRightFingers, info, Toast.LENGTH_SHORT).show() }
     }
 
     override fun updateFingerPrintImage(fi: FingerprintImage?) {

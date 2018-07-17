@@ -3,7 +3,6 @@ package com.lemuel.lemubit.fingerprinttest.model;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-//todo Continue from here add BYTE variable to save picture image 
 public class RealmModel extends RealmObject {
     @PrimaryKey
     private int id;
@@ -21,6 +20,8 @@ public class RealmModel extends RealmObject {
     private int leftMiddle;
     private int leftRing;
     private int leftPinky;
+
+    private byte[] photo;
 
 
 
@@ -126,5 +127,13 @@ public class RealmModel extends RealmObject {
 
     public void setLeftPinky(int leftPinky) {
         this.leftPinky = leftPinky;
+    }
+
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 }

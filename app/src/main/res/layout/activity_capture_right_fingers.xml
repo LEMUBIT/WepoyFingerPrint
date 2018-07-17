@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="#fff"
     android:padding="5dp"
-    tools:context=".view.CaptureRightFingers">
+    tools:context=".view.EnrolRightFingers">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/animation_right_pinky"
