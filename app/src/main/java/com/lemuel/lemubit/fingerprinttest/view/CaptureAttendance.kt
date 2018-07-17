@@ -11,8 +11,8 @@ import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.lemuel.lemubit.fingerprinttest.R
 import com.lemuel.lemubit.fingerprinttest.helper.CaptureAttendanceState
-import com.lemuel.lemubit.fingerprinttest.helper.CaptureAttendanceState.attendees
 import com.lemuel.lemubit.fingerprinttest.helper.DateAndTime
+import com.lemuel.lemubit.fingerprinttest.model.AttendanceRealmModel
 import com.lemuel.lemubit.fingerprinttest.model.DataHelper
 import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
@@ -27,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_capture_attendance.*
 
 
@@ -38,13 +39,15 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
     lateinit var dialogBuilder: MaterialDialog.Builder
     lateinit var dialog: MaterialDialog
     private var realm: Realm? = null
-
+    lateinit var captureAttendanceState: CaptureAttendanceState
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_capture_attendance)
         realm = Realm.getDefaultInstance()
         recyclerView = findViewById(R.id.recyclerv_attendee)
         setProgressDialog()
+        captureAttendanceState = CaptureAttendanceState()
+        checkForCapturedAttendees()
 
         /**RxJava operation gets fingerPrint Data from getFingerPrint() and Maps the result to getUserID which calls
          * the observer's onNext method and sends the userID with the notification.
@@ -62,6 +65,17 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
 
 
         setUpRecyclerView()
+    }
+
+    /*check for captured attendees to avoid them from being captured twice*/
+    private fun checkForCapturedAttendees() {
+        var capturedAttendees: RealmResults<AttendanceRealmModel> = DataHelper.getTodayAttendance()
+
+        if (capturedAttendees.size > 0) {
+            capturedAttendees.forEach {
+                captureAttendanceState.newAttendee(it.id)
+            }
+        }
     }
 
     private fun setUpRecyclerView() {
@@ -84,7 +98,7 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
     }
 
     override fun updateFingerPrintImage(fi: FingerprintImage?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Log.d("FingerPrint", "UpdateFingerPrintImage()")
     }
 
     override fun onPlayNotificationSound(res: Int) {
@@ -93,9 +107,9 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
         mPlayerInitialized = true
     }
 
-    override fun onInfoGotten(ID: Int, name: String, lastName: String) {
-        DataHelper.markAttendance(ID, name, lastName, DateAndTime.getCurrentTime(), DateAndTime.getCurrentDate())
-        Rollbar.instance().log("Info Gotten:" + ID.toString())
+    override fun onInfoGotten(userID: Int, name: String, lastName: String) {
+        DataHelper.markAttendance(userID, name, lastName, DateAndTime.getCurrentTime(), DateAndTime.getCurrentDate())
+        Rollbar.instance().log("Info Gotten:" + userID.toString())
 
         adapter?.notifyDataSetChanged()
     }
@@ -123,12 +137,15 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
 
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
-            if (id >= 0 && !CaptureAttendanceState.alreadyCaptured(id)) {
+            if (id >= 0 && !captureAttendanceState.alreadyCaptured(id)) {
+                //todo debug
+                Rollbar.instance().debug("User RX ID=$id")
+
                 TakeAttendancePresenter.getUserInfo(id, this@CaptureAttendance)
                 TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@CaptureAttendance)
-                attendees.add(id)
+                captureAttendanceState.newAttendee(id)
             } else {
-                if (CaptureAttendanceState.alreadyCaptured(id))
+                if (id >= 0 && captureAttendanceState.alreadyCaptured(id))
                     showInfoToast("You're already captured for Today")
 
                 TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@CaptureAttendance)
@@ -146,6 +163,7 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
         override fun onError(e: Throwable) {
             TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@CaptureAttendance)
             Log.d("RxJAVA:", e.message)
+            showInfoToast("Error:$e")
         }
 
     }

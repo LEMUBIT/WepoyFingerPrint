@@ -8,9 +8,9 @@ object TakeAttendancePresenter {
     const val GOOD = 0
     const val BAD = 1
 
-    fun getUserInfo(ID: Int, takeAttendanceView: TakeAttendanceView) {
-        takeAttendanceView.onUpdateInfoTextView(DataHelper.getUserInfo(ID).name)
-        takeAttendanceView.onInfoGotten(ID, DataHelper.getUserInfo(ID).name, DataHelper.getUserInfo(ID).lastName)
+    fun getUserInfo(fingerPrintID: Int, takeAttendanceView: TakeAttendanceView) {
+        takeAttendanceView.onUpdateInfoTextView(DataHelper.getUserInfo(fingerPrintID).name)
+        takeAttendanceView.onInfoGotten(DataHelper.getUserInfo(fingerPrintID).getId(), DataHelper.getUserInfo(fingerPrintID).name, DataHelper.getUserInfo(fingerPrintID).lastName)
     }
 
     fun playSound(state: Int, takeAttendanceView: TakeAttendanceView) {

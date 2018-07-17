@@ -21,7 +21,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_capture_left_fingers.*
 
-class CaptureLeftFingers : AppCompatActivity(), FingerPrintInterface {
+class EnrolLeftFingers : AppCompatActivity(), FingerPrintInterface {
     //maps the finger count to the ID of the fingerprint so <1,44> is for the first finger that has an ID of 44
     var fingerIDMap = HashMap<Int, Int>()
 
@@ -104,7 +104,7 @@ class CaptureLeftFingers : AppCompatActivity(), FingerPrintInterface {
     }
 
     override fun showInfoToast(info: String?) {
-        // this.runOnUiThread { Toast.makeText(this@CaptureRightFingers, info, Toast.LENGTH_SHORT).show() }
+        // this.runOnUiThread { Toast.makeText(this@EnrolRightFingers, info, Toast.LENGTH_SHORT).show() }
     }
 
     override fun updateFingerPrintImage(fi: FingerprintImage?) {

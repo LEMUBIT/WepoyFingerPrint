@@ -45,7 +45,6 @@ object Fingerprint {
                 res = null
             }
 
-            //TODO continue from here
             fingerPrintInterface.updateFingerPrintImage(fi)
         } while (false)
 
