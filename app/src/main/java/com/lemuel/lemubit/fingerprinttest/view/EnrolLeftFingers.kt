@@ -9,6 +9,7 @@ import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 
 import com.lemuel.lemubit.fingerprinttest.R
+import com.lemuel.lemubit.fingerprinttest.helper.Fingers
 import com.lemuel.lemubit.fingerprinttest.operations.Fingerprint
 import com.lemuel.lemubit.fingerprinttest.operations.GetBitMap
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
@@ -26,12 +27,12 @@ class EnrolLeftFingers : AppCompatActivity(), FingerPrintInterface {
     var fingerIDMap = HashMap<Int, Int>()
 
     //monitors fingers that have been captures, therefor limit is 5
-    var fingerCount = 1
+    var currentFinger = Fingers.THUMB
 
     lateinit var dialogBuilder: MaterialDialog.Builder
     lateinit var dialog: MaterialDialog
     lateinit var speakerbox: Speakerbox
-
+    var allFingersCaptured = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_capture_left_fingers)
@@ -47,24 +48,24 @@ class EnrolLeftFingers : AppCompatActivity(), FingerPrintInterface {
                 .observeOn(AndroidSchedulers.mainThread())
 
         btn_capture_left_fingers.setOnClickListener {
-            if (fingerCount <= 5) {
+            if (!allFingersCaptured) {
                 playInstruction()
                 fingerObserver.subscribe(observer)
             } else {
-                speakerbox.play("Please, proceed with registration")
+                speakerbox.play(getString(R.string.proceed_with_registration))
             }
         }
 
         btn_lefthand_close.setOnClickListener {
-            if (fingerCount >= 5) {
+            if (allFingersCaptured) {
                 val intent = Intent()
                 val mBundle = Bundle()
-                mBundle.putSerializable("FingerIDHashMap", fingerIDMap)
+                mBundle.putSerializable(Fingers.FINGER_ID_HASHMAP_BUNDLE, fingerIDMap)
                 intent.putExtras(mBundle)
                 setResult(RESULT_OK, intent)
                 finish()
             } else {
-                speakerbox.play("Registration canceled!")
+                speakerbox.play(getString(R.string.registration_canceled))
                 finish()
             }
         }
@@ -72,11 +73,10 @@ class EnrolLeftFingers : AppCompatActivity(), FingerPrintInterface {
 
     override fun onResume() {
         super.onResume()
-        speakerbox.play("Please, proceed with left finger registration")
+        speakerbox.play(getString(R.string.proceed_with_left_finger_registration))
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-
         when (keyCode) {
             KeyEvent.KEYCODE_BACK -> {
                 return false
@@ -118,18 +118,18 @@ class EnrolLeftFingers : AppCompatActivity(), FingerPrintInterface {
     private val observer = object : Observer<Int> {
         override fun onNext(id: Int) {
             if (id >= 0) {
-                fingerIDMap.put(fingerCount, id)
-                speakerbox.play("Fingerprint gotten")
-                when (fingerCount) {
-                    1 -> animation_left_thumb.visibility = View.VISIBLE
-                    2 -> animation_left_index.visibility = View.VISIBLE
-                    3 -> animation_left_middle.visibility = View.VISIBLE
-                    4 -> animation_left_ring.visibility = View.VISIBLE
-                    5 -> animation_left_pinky.visibility = View.VISIBLE
+                fingerIDMap.put(currentFinger, id)
+                speakerbox.play(getString(R.string.fingerprint_gotten))
+                when (currentFinger) {
+                    Fingers.THUMB -> animation_left_thumb.visibility = View.VISIBLE
+                    Fingers.INDEX_FINGER -> animation_left_index.visibility = View.VISIBLE
+                    Fingers.MIDDLE_FINGER -> animation_left_middle.visibility = View.VISIBLE
+                    Fingers.RING_FINGER -> animation_left_ring.visibility = View.VISIBLE
+                    Fingers.PINKY_FINGER -> animation_left_pinky.visibility = View.VISIBLE
                 }
-                fingerCount++
+                nextFinger()
             } else {
-                speakerbox.play("Sorry, please try again")
+                speakerbox.play(getString(R.string.try_again))
             }
         }
 
@@ -142,18 +142,27 @@ class EnrolLeftFingers : AppCompatActivity(), FingerPrintInterface {
         }
 
         override fun onError(e: Throwable) {
-            speakerbox.play("Sorry, please try again")
+            speakerbox.play(getString(R.string.try_again))
         }
 
     }
 
+
+    private fun nextFinger() {
+        if (currentFinger < Fingers.PINKY_FINGER) {
+            currentFinger++
+        } else {
+            allFingersCaptured = true
+        }
+    }
+
     private fun playInstruction() {
-        when (fingerCount) {
-            1 -> speakerbox.play("Please, place left thumb on sensor")
-            2 -> speakerbox.play("Please, place left index finger on sensor")
-            3 -> speakerbox.play("Please, Place left middle finger on sensor")
-            4 -> speakerbox.play("Please, Place left ring finger on sensor")
-            5 -> speakerbox.play("Please, Place left pinky finger on sensor")
+        when (currentFinger) {
+            Fingers.THUMB -> speakerbox.play(getString(R.string.place_left_thumb))
+            Fingers.INDEX_FINGER -> speakerbox.play(getString(R.string.place_left_index))
+            Fingers.MIDDLE_FINGER -> speakerbox.play(getString(R.string.place_left_middle))
+            Fingers.RING_FINGER -> speakerbox.play(getString(R.string.place_left_ring))
+            Fingers.PINKY_FINGER -> speakerbox.play(getString(R.string.place_left_pinky))
         }
     }
 }

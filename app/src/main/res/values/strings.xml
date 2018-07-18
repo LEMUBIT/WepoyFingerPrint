@@ -89,4 +89,26 @@
     <string name="error_card_not_activate">Operation failed because of card is not activated!</string>
     <string name="error_no_paper">Paper has been exhausted!</string>
     <string name="error_other">Operation failed because of other error!</string>
+    <string name="right_finger_info_gotten">Right finger information gotten</string>
+    <string name="left_finger_info_gotten">Left finger information gotten</string>
+    <string name="registration_successful">Registration successful</string>
+    <string name="registration_failed">Sorry, registration failed</string>
+    <string name="not_done_with_regsitration">Sorry, you are not done with registration</string>
+    <string name="fingerprint_gotten">Fingerprint gotten</string>
+    <string name="proceed_with_left_finger_registration">Please, proceed with left finger registration</string>
+    <string name="proceed_with_registration">Please, proceed with registration</string>
+    <string name="registration_canceled">Registration canceled!</string>
+    <string name="try_again">Sorry, please try again</string>
+    <string name="proceed_with_right_finger_registration">Please, proceed with right finger registration</string>
+    <string name="place_left_thumb">Please, place left thumb on sensor</string>
+    <string name="place_left_index">Please, place left index finger on sensor</string>
+    <string name="place_left_middle">Please, Place left middle finger on sensor</string>
+    <string name="place_left_ring">Please, Place left ring finger on sensor</string>
+    <string name="place_left_pinky">Please, Place left pinky finger on sensor</string>
+    <string name="place_right_thumb">Please, place right thumb on sensor</string>
+    <string name="place_right_index">Please, place right index finger on sensor</string>
+    <string name="place_right_middle">Please, Place right middle finger on sensor</string>
+    <string name="place_right_ring">Please, Place right ring finger on sensor</string>
+    <string name="place_right_pinky">Please, Place right pinky finger on sensor</string>
+    <string name="already_captured">You\'re already captured for Today</string>
 </resources>
