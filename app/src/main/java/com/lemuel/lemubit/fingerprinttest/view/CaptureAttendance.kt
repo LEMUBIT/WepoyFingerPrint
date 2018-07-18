@@ -19,7 +19,7 @@ import com.lemuel.lemubit.fingerprinttest.presenter.TakeAttendancePresenter
 import com.lemuel.lemubit.fingerprinttest.recyclerview.CaptureAttendanceAdapter
 import com.lemuel.lemubit.fingerprinttest.viewInterface.FingerPrintInterface
 import com.lemuel.lemubit.fingerprinttest.viewInterface.TakeAttendanceView
-import com.rollbar.android.Rollbar
+import com.mapzen.speakerbox.Speakerbox
 import com.wepoy.fp.FingerprintImage
 import io.reactivex.Observable
 import io.reactivex.Observer
@@ -38,6 +38,7 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
     private var adapter: CaptureAttendanceAdapter? = null
     lateinit var dialogBuilder: MaterialDialog.Builder
     lateinit var dialog: MaterialDialog
+    lateinit var speakerbox: Speakerbox
     private var realm: Realm? = null
     lateinit var captureAttendanceState: CaptureAttendanceState
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +50,8 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
         captureAttendanceState = CaptureAttendanceState()
         checkForCapturedAttendees()
 
+        speakerbox = Speakerbox(application)
+        speakerbox.enableVolumeControl(this)
         /**RxJava operation gets fingerPrint Data from getFingerPrint() and Maps the result to getUserID which calls
          * the observer's onNext method and sends the userID with the notification.
          */
@@ -58,11 +61,9 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
         }.subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
 
-
         lottie_fingerprint.setOnClickListener {
             fingerObserver.subscribe(observer)
         }
-
 
         setUpRecyclerView()
     }
@@ -109,8 +110,6 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
 
     override fun onInfoGotten(userID: Int, name: String, lastName: String) {
         DataHelper.markAttendance(userID, name, lastName, DateAndTime.getCurrentTime(), DateAndTime.getCurrentDate())
-        Rollbar.instance().log("Info Gotten:" + userID.toString())
-
         adapter?.notifyDataSetChanged()
     }
 
@@ -138,17 +137,16 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
     private val observer = object : Observer<Int?> {
         override fun onNext(id: Int) {
             if (id >= 0 && !captureAttendanceState.alreadyCaptured(id)) {
-                //todo debug
-                Rollbar.instance().debug("User RX ID=$id")
-
                 TakeAttendancePresenter.getUserInfo(id, this@CaptureAttendance)
-                TakeAttendancePresenter.playSound(TakeAttendancePresenter.GOOD, this@CaptureAttendance)
+                speakerbox.play("Welcome ${DataHelper.getUserInfo(id).name})")
                 captureAttendanceState.newAttendee(id)
             } else {
-                if (id >= 0 && captureAttendanceState.alreadyCaptured(id))
-                    showInfoToast("You're already captured for Today")
+                if (id >= 0) {
+                    speakerbox.play(getString(R.string.already_captured))
+                } else {
+                    speakerbox.play(getString(R.string.try_again))
+                }
 
-                TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@CaptureAttendance)
             }
         }
 
@@ -161,9 +159,8 @@ class CaptureAttendance : AppCompatActivity(), TakeAttendanceView, FingerPrintIn
         }
 
         override fun onError(e: Throwable) {
-            TakeAttendancePresenter.playSound(TakeAttendancePresenter.BAD, this@CaptureAttendance)
+            speakerbox.play(getString(R.string.try_again))
             Log.d("RxJAVA:", e.message)
-            showInfoToast("Error:$e")
         }
 
     }

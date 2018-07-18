@@ -5,4 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="background">#66b1ea</color>
     <color name="afterTime">#f40456</color>
+
+    <color name="fingerPrintButtonDefault">#FF4081</color>
+    <color name="fingerPrintButtonGotten">#40ff4d</color>
 </resources>

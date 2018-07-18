@@ -16,18 +16,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ViewAttendance : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
-    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
-        val cal = Calendar.getInstance()
-        cal.set(p1, p2, p3)
-        val format1 = SimpleDateFormat("dd/MM/yyyy", Locale.UK)
-
-        val formatted = format1.format(cal.time)
-        adapter = ViewAttendanceAdapter(DataHelper.getAttendanceRecord(formatted), this)
-        recyclerView?.adapter = adapter
-        adapter!!.newRecord()
-        Toast.makeText(this@ViewAttendance, formatted, Toast.LENGTH_SHORT).show()
-    }
-
     private var recyclerView: RecyclerView? = null
     private var adapter: ViewAttendanceAdapter? = null
 
@@ -51,6 +39,24 @@ class ViewAttendance : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
             adapter!!.newRecord()
         }
 
+    }
+
+    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
+
+        val format = formatDate(p1, p2, p3)
+        adapter = ViewAttendanceAdapter(DataHelper.getAttendanceRecord(format), this)
+        recyclerView?.adapter = adapter
+        adapter!!.newRecord()
+        Toast.makeText(this@ViewAttendance, format, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun formatDate(year: Int, month: Int, day: Int): String {
+        val cal = Calendar.getInstance()
+        cal.set(year, month, day)
+        val format1 = SimpleDateFormat("dd/MM/yyyy", Locale.UK)
+        val formatted = format1.format(cal.time)
+
+        return formatted
     }
 
     private fun setUpRecyclerView() {
